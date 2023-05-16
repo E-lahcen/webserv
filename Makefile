@@ -1,4 +1,5 @@
-SRCS	=	main.cpp
+SRCS	=	server.cpp \
+			client.cpp
 
 
 OBJS		=	$(SRCS:.cpp=.o)

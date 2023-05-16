@@ -1,4 +1,4 @@
-cclean#include <arpa/inet.h>
+#include <arpa/inet.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -90,8 +90,6 @@ int main() {
 
         close(newsockfd);
     }
-
-    std::cout << gethostname("test", 4);
 
     return 0;
 }

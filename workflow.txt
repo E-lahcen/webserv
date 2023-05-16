@@ -1,0 +1,6 @@
+WORKFLOW WEBSERV :
+  1- Create socket : a tool network between 2 programs..
+  2- Create an adress and set it up : struct sockaddr_in
+  3- Bind the socket and address : Linking socket and address
+  4- Listen for coming connections from clients.
+  5- acc
