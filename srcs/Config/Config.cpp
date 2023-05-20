@@ -1,4 +1,5 @@
 #include "Config.hpp"
+#include <string>
 
 Config::Config(const std::string& filePath)
 {
@@ -8,25 +9,33 @@ Config::Config(const std::string& filePath)
 Config::~Config(){}
 
 
-void Config::load(const std::string& filePath) {
-        std::ifstream file(filePath);
-        if (!file) {
-            throw std::runtime_error("Failed to open configuration file: " + filePath);
-        }
+void Config::load(const std::string& filePath)
+{
+    std::ifstream file(filePath);
+    if (!file) 
+    {
+        throw std::runtime_error("Failed to open configuration file: " + filePath);
+    }
 
-        std::string line;
-        while (std::getline(file, line)) {
-            if (line.empty() || line[0] == '#' || line[0] == '}' || line[0] == '{') {
-                continue; // Skip empty lines, comments, and block delimiters
-            }
+    std::string line;
+    while (std::getline(file, line)) 
+    {
+        if (line.empty() || line[0] == '#' || line[0] == '}' || line[0] == '{') 
+            continue; // Skip empty lines, comments, and block delimiters
 
-            size_t delimiterPos = line.find(' ');
-            if (delimiterPos != std::string::npos) {
-                std::string key = line.substr(0, delimiterPos);
-                std::string value = line.substr(delimiterPos + 1);
+        line = trim_spaces(line);
+        size_t delimiterPos = line.find('=');
+        if (delimiterPos != std::string::npos) 
+        {
+            std::string key = line.substr(0, delimiterPos);
+            std::string value = line.substr(delimiterPos + 1);
+            
+            if (isValidKey(key))
                 settings[key] = value;
-            }
+            else
+                throw std::runtime_error("Invalid key in configuration: " + key);
         }
+    }
 }
 
 std::string Config::get(const std::string& key) const 
@@ -44,5 +53,20 @@ bool Config::isValidKey(const std::string& key) const {
         if (validKeys[i] == key)
             return true;
     }
+    for (size_t i = 0; i < (sizeof(validLocationKeys) / sizeof(validLocationKeys[0])); i++)
+    {
+        if (validLocationKeys[i] == key)
+            return true;
+    }
     return false;
 }
+
+std::string trim_spaces( const std::string&   str )
+{
+    std::size_t first = str.find_first_not_of(" \t");
+    std::size_t last = str.find_last_not_of(" \t");
+    if (first == std::string::npos || last == std::string::npos) {
+        return "";
+    }
+    return str.substr(first, last - first + 1);
+}   

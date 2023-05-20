@@ -1,4 +1,4 @@
-OBJS		=	$(SRCS:.cpp=.o)
+# Compiler settings
 
 CC		=	c++
 
@@ -8,8 +8,8 @@ NAME	=	webserv
 
 # directories
 
-SRCSDIR		:= srcs
-OBJSDIR		:= objs
+SRCSDIR		:=	srcs
+OBJSDIR		:=	objs
 CONFIGDIR	:=	Config
 
 # sources
