@@ -17,7 +17,7 @@ CONFIGDIR	:=	Config
 
 CPPCONFIG	:=	Config.cpp
 
-CFILES		:=	main.cpp \
+CFILES		:=	main_test_parsing_config_file.cpp \
 				$(foreach F,$(CPPCONFIG),$(CONFIGDIR)/$(F)) \
 
 SRCS		:= $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
