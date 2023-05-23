@@ -22,7 +22,7 @@ void Config::load( const char* path)
     std::string line;
     while (std::getline(file, line)) 
     {
-        if (line.empty() || line[0] == '#' || line[0] == '}' || line[0] == '{') 
+        if (setSyntax(line)) 
             continue; // Skip empty lines, comments, and block delimiters
 
         line = trim_spaces(line);
@@ -34,13 +34,41 @@ void Config::load( const char* path)
             
             if (isValidKey(key))
                 settings[key] = value;
-            else if (isValidLocationKey(key))
-                configLocations[key] = value;
+            else if (key == "location")
+            {
+                
+                configLocations.insert(parseLocation(value));
+            }
             else
                 throw std::runtime_error("Invalid key in configuration: " + key);
         }
     }
+    if (isValidBrackets())
+        throw std::runtime_error("Invalid Brackets Syntax!");
 }
+bool    Config::isValidBrackets( ) const
+{
+    std::cout << "isValidBrackets : " << Brackets[0] << " " << Brackets[1] << std::endl;
+    return (Brackets[0] == Brackets[1]);
+}
+
+bool    Config::setSyntax( std::string& line ) const
+{
+    if (line.empty() || line[0] == '#')
+        return true;
+    else if (line[0] == '{')
+    {
+        Brackets[0] += 1;
+        return true;
+    }
+    else if (line[1] == '}')
+    {
+        Brackets[1] += 1;
+        return true;
+    }
+    return false;
+}
+
 
 std::string Config::get(const std::string& key) const 
 {
@@ -66,15 +94,15 @@ bool Config::isValidKey(const std::string& key) const
     return false;
 }
 
-bool Config::isValidLocationKey( const std::string& key ) const 
-{
-    for (size_t i = 0; i < (sizeof(validLocationKeys) / sizeof(validLocationKeys[0])); i++)
-    {
-        if (validLocationKeys[i] == key)
-            return true;
-    }
-    return false;
-}
+// bool Config::isValidLocationKey( const std::string& key ) const 
+// {
+//     for (size_t i = 0; i < (sizeof(validLocationKeys) / sizeof(validLocationKeys[0])); i++)
+//     {
+//         if (validLocationKeys[i] == key)
+//             return true;
+//     }
+//     return false;
+// }
 
 std::string trim_spaces( const std::string&   str )
 {
@@ -85,5 +113,72 @@ std::string trim_spaces( const std::string&   str )
     }
     return str.substr(first, last - first + 1);
 }
+
+std::pair<Path, Config::Location> parseLocation(const std::string& value)
+{
+    // Create a new Location object
+    Config::Location location;
+
+    // Parse the location block
+    std::istringstream iss(value);
+    std::string locationPath, block;
+    iss >> locationPath;
+    std::getline(iss, block);
+
+    // Trim location path and block
+    locationPath = trim_spaces(locationPath);
+    block = trim_spaces(block);
+
+    // Process the block content
+    std::istringstream blockStream(block);
+    std::string line;
+    while (std::getline(blockStream, line)) {
+        line = trim_spaces(line);
+        if (line.empty() || line[0] == '#' || line[0] == '{') {
+            continue; // Skip empty lines and comments
+        }
+
+        std::string key, value;
+        std::istringstream lineStream(line);
+        lineStream >> key;
+        std::getline(lineStream, value);
+
+        if (!key.empty() && !value.empty()) {
+            key = trim_spaces(key);
+            value = trim_spaces(value);
+
+            if (line[0])
+            // Set the corresponding parameters in the Location object
+            if (key == "allow_methods") {
+                // Handle allow_methods setting
+                // You can parse and set the methods accordingly
+            } else if (key == "redirect") {
+                // Handle redirect setting
+                // You can parse and set the redirection accordingly
+            } else if (key == "root") {
+                // Handle root setting
+                location.root = value;
+            } else if (key == "autoindex") {
+                // Handle autoindex setting
+                location.autoindex = (value == "on");
+            } else if (key == "default") {
+                // Handle default setting
+                location.defaultFile = value;
+            } else if (key == "upload") {
+                // Handle upload setting
+                location.uploadRoute = value;
+            } else {
+                throw std::runtime_error("Invalid key in location block: " + key);
+            }
+        }
+        if (line[0] == '}')
+            break;
+    }
+    return (std::pair<locationPath, location>);
+}
+
+// Location constructor initialisation
+Config::Location::Location() : get(false), post(false), del(false), autoindex(false) {}
+
 
 Config::Location::~Location(){}
