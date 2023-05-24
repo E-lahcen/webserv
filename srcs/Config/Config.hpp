@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 16:53:30 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/05/24 00:20:25 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/05/24 22:06:59 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@ static short			Brackets[2] = {0, 0};
 
 class Config {
 	public:
-		Config(const char* filePath);
-		std::string get(const std::string& key) const;
 		
 		//Location class 
 		class Location {
@@ -49,6 +47,9 @@ class Config {
 				~Location();
 		};
 		
+		Config(const char* filePath);
+		std::string 		get(const std::string& key) const;
+		Location	getFromLocation(const Path& path ) const;
 		~Config();
 	private:
 		void    load( const char* );
@@ -56,13 +57,13 @@ class Config {
 		std::unordered_map<Path, Location>              configLocations;
 		
 		bool isValidKey(const std::string& key) const;
-		// bool isValidLocationKey(const std::string& key) const;
+		bool isValidLocationKey(const std::string& key) const;
 		bool isValidBrackets( ) const;
 		bool setSyntax( std::string& line) const;
+		std::string 		trim_spaces( const std::string&   str );
+		std::pair<Path, Config::Location>	parseLocation(const std::string& value);
 
 };
 
-std::string 		trim_spaces( const std::string&   str );
-std::pair<Path, Config::Location>	parseLocation(const std::string& value);
 
 #endif
