@@ -38,9 +38,9 @@ void Config::load( const char* path)
                 throw std::runtime_error("Invalid key in configuration: " + key);
         }
         else if (line.substr(0, 8) == "location")
-            configLocations.insert(parseLocation(line));
+            configLocations.insert(parseLocation(file, line));
     }
-    if (isValidBrackets())
+    if (!isValidBrackets())
         throw std::runtime_error("Invalid Brackets Syntax!");
 }
 
@@ -58,7 +58,7 @@ bool    Config::setSyntax( std::string& line ) const
         Brackets[0] += 1;
         return true;
     }
-    else if (line[1] == '}')
+    else if (line[0] == '}')
     {
         Brackets[1] += 1;
         return true;
@@ -78,7 +78,6 @@ std::string Config::get(const std::string& key ) const
 Config::Location Config::getFromLocation( const Path& path ) const 
 {
     std::unordered_map<Path, Config::Location>::const_iterator it = configLocations.find(path);
-    std::cout << "umap.size = " << configLocations.size()  << " path = " << path << " ,conf path = " << configLocations.begin()->first << std::endl;
     if (it != configLocations.end())
         return it->second;
     throw std::runtime_error("Key not found in Location configuration: " + path);
@@ -114,30 +113,24 @@ std::string Config::trim_spaces( const std::string&   str )
     return str.substr(first, last - first + 1);
 }
 
-std::pair<Path, Config::Location> Config::parseLocation(const std::string& locationline)
+std::pair<Path, Config::Location> Config::parseLocation( std::ifstream& ifile, std::string& locationline)
 {
-    // Create a new Location object
     Config::Location location;
 
-    // Parse the location block
+    // Parse the location path
     std::istringstream iss(locationline);
     Path locationPath;
-    std::string block;
     iss >> locationPath;
-    std::getline(iss, block);
+    std::getline(iss, locationPath);
 
-    // Trim location path and block
     locationPath = trim_spaces(locationPath);
-    block = trim_spaces(block);
 
-    // Process the block content
-    std::istringstream blockStream(block);
     std::string line;
-    while (std::getline(blockStream, line, '\n'))
+    while (std::getline(ifile, line))
     {
         line = trim_spaces(line);
-        if (line.empty() || line[0] == '#' || line[0] == '{')
-            continue; // Skip empty lines and comments
+        if (setSyntax(line) && line[0] != '}') 
+            continue; // Skip empty lines, comments, and block delimiters
 
         size_t delimiterPos = line.find('=');
         if (delimiterPos != std::string::npos) 
@@ -173,8 +166,10 @@ std::pair<Path, Config::Location> Config::parseLocation(const std::string& locat
             else
                 throw std::runtime_error("Invalid key in configuration: " + key);
         }
+        else if  (line[0] == '}')
+            break;
     }
-    return (std::pair<Path, Config::Location>(block, location));
+    return (std::pair<Path, Config::Location>(locationPath, location));
 }
 
 // Location constructor initialisation

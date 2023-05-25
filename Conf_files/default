@@ -22,7 +22,7 @@ server
 
 		default=/default.html
 
-		cgi=.php /bin/python3
+		# cgi=.php /bin/python3
 
 		upload=/goinfre
 
@@ -41,7 +41,7 @@ server
 
 		default=/default.html
 
-		cgi=.php /bin/python3
+		# cgi=.php /bin/python3
 
 		upload=/goinfre
 
