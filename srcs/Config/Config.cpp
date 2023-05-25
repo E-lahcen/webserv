@@ -39,6 +39,9 @@ void Config::load( const char* path)
         }
         else if (line.substr(0, 8) == "location")
             configLocations.insert(parseLocation(file, line));
+        else
+            throw std::runtime_error("Invalid \"Key=value syntax\" in configuration!");
+
     }
     if (!isValidBrackets())
         throw std::runtime_error("Invalid Brackets Syntax!");
@@ -53,12 +56,12 @@ bool    Config::setSyntax( std::string& line ) const
 {
     if (line.empty() || line[0] == '#')
         return true;
-    else if (line[0] == '{')
+    else if (line == "{")
     {
         Brackets[0] += 1;
         return true;
     }
-    else if (line[0] == '}')
+    else if (line == "}")
     {
         Brackets[1] += 1;
         return true;
@@ -129,7 +132,7 @@ std::pair<Path, Config::Location> Config::parseLocation( std::ifstream& ifile, s
     while (std::getline(ifile, line))
     {
         line = trim_spaces(line);
-        if (setSyntax(line) && line[0] != '}') 
+        if (setSyntax(line) && line != "}") 
             continue; // Skip empty lines, comments, and block delimiters
 
         size_t delimiterPos = line.find('=');
@@ -142,35 +145,72 @@ std::pair<Path, Config::Location> Config::parseLocation( std::ifstream& ifile, s
             {
 
                 // Set the corresponding parameters in the Location object
-                if (key == "allow_methods") {
+                if (key == "allow_methods") 
+                {
                     // Handle allow_methods setting
-                    // You can parse and set the methods accordingly
-                } else if (key == "redirect") {
+                    parseMethods(location, value);
+                }
+                else if (key == "redirect") 
+                {
                     // Handle redirect setting
-                    // You can parse and set the redirection accordingly
-                } else if (key == "root") {
+                    location.redirection = parseRedirection(value);
+                }
+                else if (key == "root") 
+                {
                     // Handle root setting
                     location.root = value;
-                } else if (key == "autoindex") {
+                }
+                else if (key == "autoindex") 
+                {
                     // Handle autoindex setting
                     location.autoindex = (value == "on");
-                } else if (key == "default") {
+                }
+                else if (key == "default") 
+                {
                     // Handle default setting
                     location.defaultFile = value;
-                } else if (key == "upload") {
+                }
+                else if (key == "upload") 
+                {
                     // Handle upload setting
                     location.uploadRoute = value;
-                } else 
-                    throw std::runtime_error("Invalid key in location block: " + key);
+                }
             }
-            else
-                throw std::runtime_error("Invalid key in configuration: " + key);
+            else 
+                throw std::runtime_error("Invalid key in location block: " + key);
         }
-        else if  (line[0] == '}')
+        else if  (line == "}")
             break;
     }
     return (std::pair<Path, Config::Location>(locationPath, location));
 }
+
+std::pair<StatusNbr, Path>	Config::parseRedirection( const std::string& line )
+{
+    std::istringstream iss(line);
+    Path value;
+    std::string stat;
+    iss >> stat;
+    std::getline(iss, value);
+    if (stat.empty() || value.empty())
+        throw std::runtime_error("Invalid Redirection");
+    return (std::pair<StatusNbr, Path>(std::stoi(stat), value));
+}
+
+void    Config::parseMethods( Location& location , const std::string& value )
+{
+    std::stringstream ss(value);
+    std::string word;
+    (void)location;
+
+    while (ss >> word)
+    {
+        (word == "GET") ? location.get = true : (word == "POST") ? location.post = true : (word == "DELETE") ? location.del = true : \
+        throw std::runtime_error("Invalid Method : " + word);
+    }
+}
+
+
 
 // Location constructor initialisation
 Config::Location::Location() : get(false), post(false), del(false), autoindex(false) {}

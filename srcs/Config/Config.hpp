@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 16:53:30 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/05/25 11:44:46 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/05/25 21:20:15 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,10 @@ class Config {
 		bool isValidLocationKey(const std::string& key) const;
 		bool isValidBrackets( ) const;
 		bool setSyntax( std::string& line) const;
-		std::string 		trim_spaces( const std::string&   str );
+		std::string 						trim_spaces( const std::string&   str );
 		std::pair<Path, Config::Location>	parseLocation( std::ifstream& ifile, std::string& line );
+		std::pair<StatusNbr, Path>			parseRedirection( const std::string& value );
+		void								parseMethods( Location& , const std::string& );
 
 };
 

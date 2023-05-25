@@ -12,9 +12,9 @@ server
 	location / 
     {
 
-		allow_methods=GET POST DELETE
+		allow_methods=GET	POST
 
-		redirect=301 /redirect.html
+		redirect=303 /redirect.html
 
 		root=/path/to/dir
 		
@@ -22,7 +22,7 @@ server
 
 		default=/default.html
 
-		# cgi=.php /bin/python3
+		cgi=.php /bin/python3
 
 		upload=/goinfre
 
@@ -41,7 +41,7 @@ server
 
 		default=/default.html
 
-		# cgi=.php /bin/python3
+		cgi=.php /bin/python3
 
 		upload=/goinfre
 
