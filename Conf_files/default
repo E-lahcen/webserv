@@ -22,7 +22,7 @@ server
 
 		default=/default.html
 
-		cgi=.php /bin/python3
+		cgi=.py /bin/python3
 
 		upload=/goinfre
 
@@ -48,3 +48,55 @@ server
 	}
 
 }
+
+server
+{
+    
+	server_name=test
+
+	listen=127.0.0.1:8080
+
+	error_page=404 /error_page.html
+
+	client_body_size_max=100
+
+	location / 
+    {
+
+		allow_methods=GET	POST
+
+		redirect=303 /redirect.html
+
+		root=/path/to/dir
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.py /bin/python3
+
+		upload=/goinfre
+
+	}
+
+	location /a 
+    {
+
+		allow_methods=GET POST DELETE
+
+		redirect=301 /redirect.html
+
+		root=/path/to/dir
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.php /bin/python3
+
+		upload=/goinfre
+
+	}
+
+}
+

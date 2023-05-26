@@ -14,6 +14,7 @@ int main( int ac, char **av )
         bool        get = config.getFromLocation("/").get;
         bool        post = config.getFromLocation("/").post;
         bool        del = config.getFromLocation("/").del;
+        CgiPair        cgi = config.getFromLocation("/").cgi;
 
         // Use the retrieved configuration settings
         std::cout << "Server Name: " << serverName << std::endl;
@@ -23,6 +24,7 @@ int main( int ac, char **av )
         std::cout << "Location : / , autoindex = " << autoindex << std::endl;
         std::cout << "Location : / , default = " << defaultF << std::endl;
         std::cout << "Location : / , get = " << get << " post = " << post << " del = "<< del << std::endl;
+        std::cout << "Location : / , cgi[.php] = " << cgi[".php"] << std::endl;
     } catch (const std::exception& e) 
     {
         std::cerr << "Error loading configuration: " << e.what() << std::endl;

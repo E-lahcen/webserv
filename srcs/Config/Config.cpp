@@ -9,7 +9,7 @@ Config::Config(const char* filePath)
 Config::~Config(){}
 
 
-void Config::load( const char* path)
+void Config::load( const char* path )
 {
     if (!path)
         throw std::runtime_error("Include a config file!");
@@ -22,10 +22,10 @@ void Config::load( const char* path)
     std::string line;
     while (std::getline(file, line)) 
     {
+        line = trim_spaces(line);
+
         if (setSyntax(line)) 
             continue; // Skip empty lines, comments, and block delimiters
-
-        line = trim_spaces(line);
         size_t delimiterPos = line.find('=');
         if (delimiterPos != std::string::npos) 
         {
@@ -40,7 +40,7 @@ void Config::load( const char* path)
         else if (line.substr(0, 8) == "location")
             configLocations.insert(parseLocation(file, line));
         else
-            throw std::runtime_error("Invalid \"Key=value syntax\" in configuration!");
+            throw std::runtime_error("Invalid \"Key=value syntax\" in configuration! " + line);
 
     }
     if (!isValidBrackets())
@@ -54,7 +54,9 @@ bool    Config::isValidBrackets( ) const
 
 bool    Config::setSyntax( std::string& line ) const
 {
-    if (line.empty() || line[0] == '#')
+    if (line == "server")
+        return true;
+    else if (line.empty() || line[0] == '#')
         return true;
     else if (line == "{")
     {
@@ -175,6 +177,11 @@ std::pair<Path, Config::Location> Config::parseLocation( std::ifstream& ifile, s
                     // Handle upload setting
                     location.uploadRoute = value;
                 }
+                else if (key == "cgi") 
+                {
+                    // Handle upload setting
+                    location.cgi.insert(parseCgi(value));
+                }
             }
             else 
                 throw std::runtime_error("Invalid key in location block: " + key);
@@ -201,7 +208,6 @@ void    Config::parseMethods( Location& location , const std::string& value )
 {
     std::stringstream ss(value);
     std::string word;
-    (void)location;
 
     while (ss >> word)
     {
@@ -210,6 +216,20 @@ void    Config::parseMethods( Location& location , const std::string& value )
     }
 }
 
+std::pair<Extension, Path>			Config::parseCgi( const std::string& value )
+{
+    std::stringstream ss(value);
+    Extension extension;
+    Path path;
+
+    ss >> extension;
+    if (extension[0] != '.')
+        throw std::runtime_error("Invalid CGI extension!");
+    ss >> path;
+    if (path[0] != '/')
+        throw std::runtime_error("Invalid CGI path!");
+    return std::pair<Extension, Path>(extension, path);
+}
 
 
 // Location constructor initialisation
