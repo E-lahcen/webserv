@@ -2,7 +2,7 @@
 
 CC		=	c++
 
-FLAGS	=	-Wall -Wextra -Werror -std=c++98
+FLAGS	=	-Wall -Wextra -Werror -std=c++98 -Iincludes
 
 NAME	=	webserv
 
@@ -11,14 +11,18 @@ NAME	=	webserv
 SRCSDIR		:=	srcs
 OBJSDIR		:=	objs
 CONFIGDIR	:=	Config
+SERVERDIR	:=	Server
 
 # sources
 
 
 CPPCONFIG	:=	Config.cpp
 
+CPPSERVER	:=	Server.cpp
+
 CFILES		:=	main_test_parsing_config_file.cpp \
 				$(foreach F,$(CPPCONFIG),$(CONFIGDIR)/$(F)) \
+				$(foreach F,$(CPPSERVER),$(SERVERDIR)/$(F)) \
 
 SRCS		:= $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
 

@@ -1,61 +1,63 @@
 #include "Config.hpp"
 #include <string>
 
-Config::Config(const char* filePath)
+Config::Config(const char *filePath)
 {
     load(filePath);
 }
 
-Config::~Config(){}
+Config::~Config() {}
 
-
-void Config::load( const char* path )
+void Config::load(const char *path)
 {
     if (!path)
         throw std::runtime_error("Include a config file!");
     std::string filePath = path;
     std::ifstream file(filePath);
 
-    if (!file) 
+    if (!file)
         throw std::runtime_error("Failed to open configuration file: " + filePath);
 
     std::string line;
-    while (std::getline(file, line)) 
+    while (std::getline(file, line))
     {
         line = trim_spaces(line);
-
-        if (setSyntax(line)) 
+        // std::cout << "line : " << line << "| server.size() : " << config_servers.size() << std::endl;
+        if (setSyntax(line))
             continue; // Skip empty lines, comments, and block delimiters
         size_t delimiterPos = line.find('=');
-        if (delimiterPos != std::string::npos) 
+        if (delimiterPos != std::string::npos)
         {
             std::string key = trim_spaces(line.substr(0, delimiterPos));
             std::string value = trim_spaces(line.substr(delimiterPos + 1));
-            
+
             if (isValidKey(key))
-                settings[key] = value;
+                config_servers.back().setSettings(key, value);
             else
                 throw std::runtime_error("Invalid key in configuration: " + key);
         }
         else if (line.substr(0, 8) == "location")
-            configLocations.insert(parseLocation(file, line));
+            config_servers.back().setServerLocations(parseLocation(file, line));
         else
             throw std::runtime_error("Invalid \"Key=value syntax\" in configuration! " + line);
-
     }
     if (!isValidBrackets())
         throw std::runtime_error("Invalid Brackets Syntax!");
 }
 
-bool    Config::isValidBrackets( ) const
+bool Config::isValidBrackets() const
 {
     return (Brackets[0] == Brackets[1]);
 }
 
-bool    Config::setSyntax( std::string& line ) const
+bool Config::setSyntax(std::string &line)
 {
     if (line == "server")
+    {
+        Server server;
+        config_servers.push_back(server);
         return true;
+    }
     else if (line.empty() || line[0] == '#')
         return true;
     else if (line == "{")
@@ -71,24 +73,26 @@ bool    Config::setSyntax( std::string& line ) const
     return false;
 }
 
-
-std::string Config::get(const std::string& key ) const 
+std::string Config::get(const std::string &key) const
 {
-    std::unordered_map<std::string, std::string>::const_iterator it = settings.find(key);
-    if (it != settings.end())
+    std::unordered_map<std::string, std::string> last_settings = config_servers.back().getSettings();
+    std::unordered_map<std::string, std::string>::const_iterator it = last_settings.find(key);
+    if (it != last_settings.end())
         return it->second;
     throw std::runtime_error("Key not found in configuration: " + key);
 }
 
-Config::Location Config::getFromLocation( const Path& path ) const 
+Server::Location Config::getFromLocation(const Path &path) const
 {
-    std::unordered_map<Path, Config::Location>::const_iterator it = configLocations.find(path);
-    if (it != configLocations.end())
+    // Server last_server = config_servers.back();
+    std::unordered_map<Path, Server::Location> last_server_location = config_servers.back().getServerLocations();
+    std::unordered_map<Path, Server::Location>::const_iterator it = last_server_location.find("/");
+    if (it != last_server_location.end())
         return it->second;
     throw std::runtime_error("Key not found in Location configuration: " + path);
 }
 
-bool Config::isValidKey(const std::string& key) const 
+bool Config::isValidKey(const std::string &key) const
 {
     for (size_t i = 0; i < (sizeof(validKeys) / sizeof(validKeys[0])); i++)
     {
@@ -98,7 +102,7 @@ bool Config::isValidKey(const std::string& key) const
     return false;
 }
 
-bool Config::isValidLocationKey( const std::string& key ) const 
+bool Config::isValidLocationKey(const std::string &key) const
 {
     for (size_t i = 0; i < (sizeof(validLocationKeys) / sizeof(validLocationKeys[0])); i++)
     {
@@ -108,19 +112,20 @@ bool Config::isValidLocationKey( const std::string& key ) const
     return false;
 }
 
-std::string Config::trim_spaces( const std::string&   str )
+std::string Config::trim_spaces(const std::string &str)
 {
     std::size_t first = str.find_first_not_of(" \t");
     std::size_t last = str.find_last_not_of(" \t");
-    if (first == std::string::npos || last == std::string::npos) {
+    if (first == std::string::npos || last == std::string::npos)
+    {
         return "";
     }
     return str.substr(first, last - first + 1);
 }
 
-std::pair<Path, Config::Location> Config::parseLocation( std::ifstream& ifile, std::string& locationline)
+std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, std::string &locationline)
 {
-    Config::Location location;
+    Server::Location location;
 
     // Parse the location path
     std::istringstream iss(locationline);
@@ -134,65 +139,65 @@ std::pair<Path, Config::Location> Config::parseLocation( std::ifstream& ifile, s
     while (std::getline(ifile, line))
     {
         line = trim_spaces(line);
-        if (setSyntax(line) && line != "}") 
+        if (setSyntax(line) && line != "}")
             continue; // Skip empty lines, comments, and block delimiters
 
         size_t delimiterPos = line.find('=');
-        if (delimiterPos != std::string::npos) 
+        if (delimiterPos != std::string::npos)
         {
             std::string key = trim_spaces(line.substr(0, delimiterPos));
             std::string value = trim_spaces(line.substr(delimiterPos + 1));
-            
+
             if (isValidLocationKey(key) && !value.empty())
             {
 
                 // Set the corresponding parameters in the Location object
-                if (key == "allow_methods") 
+                if (key == "allow_methods")
                 {
                     // Handle allow_methods setting
                     parseMethods(location, value);
                 }
-                else if (key == "redirect") 
+                else if (key == "redirect")
                 {
                     // Handle redirect setting
                     location.redirection = parseRedirection(value);
                 }
-                else if (key == "root") 
+                else if (key == "root")
                 {
                     // Handle root setting
                     location.root = value;
                 }
-                else if (key == "autoindex") 
+                else if (key == "autoindex")
                 {
                     // Handle autoindex setting
                     location.autoindex = (value == "on");
                 }
-                else if (key == "default") 
+                else if (key == "default")
                 {
                     // Handle default setting
                     location.defaultFile = value;
                 }
-                else if (key == "upload") 
+                else if (key == "upload")
                 {
                     // Handle upload setting
                     location.uploadRoute = value;
                 }
-                else if (key == "cgi") 
+                else if (key == "cgi")
                 {
                     // Handle upload setting
                     location.cgi.insert(parseCgi(value));
                 }
             }
-            else 
+            else
                 throw std::runtime_error("Invalid key in location block: " + key);
         }
-        else if  (line == "}")
+        else if (line == "}")
             break;
     }
-    return (std::pair<Path, Config::Location>(locationPath, location));
+    return (std::pair<Path, Server::Location>(locationPath, location));
 }
 
-std::pair<StatusNbr, Path>	Config::parseRedirection( const std::string& line )
+std::pair<StatusNbr, Path> Config::parseRedirection(const std::string &line)
 {
     std::istringstream iss(line);
     Path value;
@@ -204,19 +209,20 @@ std::pair<StatusNbr, Path>	Config::parseRedirection( const std::string& line )
     return (std::pair<StatusNbr, Path>(std::stoi(stat), value));
 }
 
-void    Config::parseMethods( Location& location , const std::string& value )
+void Config::parseMethods(Server::Location &location, const std::string &value)
 {
     std::stringstream ss(value);
     std::string word;
 
     while (ss >> word)
     {
-        (word == "GET") ? location.get = true : (word == "POST") ? location.post = true : (word == "DELETE") ? location.del = true : \
-        throw std::runtime_error("Invalid Method : " + word);
+        (word == "GET") ? location.get = true : (word == "POST") ? location.post = true
+                                            : (word == "DELETE") ? location.del = true
+                                                                 : throw std::runtime_error("Invalid Method : " + word);
     }
 }
 
-std::pair<Extension, Path>			Config::parseCgi( const std::string& value )
+std::pair<Extension, Path> Config::parseCgi(const std::string &value)
 {
     std::stringstream ss(value);
     Extension extension;
@@ -230,10 +236,3 @@ std::pair<Extension, Path>			Config::parseCgi( const std::string& value )
         throw std::runtime_error("Invalid CGI path!");
     return std::pair<Extension, Path>(extension, path);
 }
-
-
-// Location constructor initialisation
-Config::Location::Location() : get(false), post(false), del(false), autoindex(false) {}
-
-
-Config::Location::~Location(){}
