@@ -12,17 +12,22 @@ SRCSDIR		:=	srcs
 OBJSDIR		:=	objs
 CONFIGDIR	:=	Config
 SERVERDIR	:=	Server
+UTILSDIR	:=	Utils
 
 # sources
 
 
-CPPCONFIG	:=	Config.cpp
+CPPCONFIG	:=	Config.cpp \
+				Network.cpp
 
 CPPSERVER	:=	Server.cpp
+
+CPPUTILS	:=	utils.cpp
 
 CFILES		:=	main_test_parsing_config_file.cpp \
 				$(foreach F,$(CPPCONFIG),$(CONFIGDIR)/$(F)) \
 				$(foreach F,$(CPPSERVER),$(SERVERDIR)/$(F)) \
+				$(foreach F,$(CPPUTILS),$(UTILSDIR)/$(F)) \
 
 SRCS		:= $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
 

@@ -6,12 +6,11 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:19 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/05/27 11:46:44 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/05/29 16:52:52 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-#define SERVER_HPP
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -24,11 +23,17 @@ typedef short StatusNbr;
 typedef std::string Path;
 typedef std::string Extension;
 typedef std::unordered_map<Extension, Path> CgiPair;
+typedef int Socket;
 static short Brackets[2] = {0, 0};
 
 class Server
 {
 public:
+	// public attributes
+	Socket socketFd;
+	std::string hostname;
+	std::string port;
+
 	// Location class
 	class Location
 	{
@@ -59,5 +64,3 @@ private:
 	std::unordered_map<std::string, std::string> settings;
 	std::unordered_map<Path, Location> serverLocations;
 };
-
-#endif

@@ -6,14 +6,13 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 16:53:30 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/05/27 15:21:20 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/05/28 17:12:45 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#pragma once
 
-#include "Server.hpp"
+#include <Server.hpp>
 #include <vector>
 
 class Config
@@ -25,7 +24,7 @@ public:
 	~Config();
 
 private:
-	std::vector<Server> config_servers;
+	std::vector<Server> configServers;
 
 	void load(const char *);
 	bool setSyntax(std::string &line);
@@ -38,5 +37,3 @@ private:
 	void parseMethods(Server::Location &, const std::string &);
 	std::pair<Extension, Path> parseCgi(const std::string &);
 };
-
-#endif

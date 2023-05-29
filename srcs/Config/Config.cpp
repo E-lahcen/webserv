@@ -22,7 +22,7 @@ void Config::load(const char *path)
     while (std::getline(file, line))
     {
         line = trim_spaces(line);
-        // std::cout << "line : " << line << "| server.size() : " << config_servers.size() << std::endl;
+        // std::cout << "line : " << line << "| server.size() : " << configServers.size() << std::endl;
         if (setSyntax(line))
             continue; // Skip empty lines, comments, and block delimiters
         size_t delimiterPos = line.find('=');
@@ -32,12 +32,12 @@ void Config::load(const char *path)
             std::string value = trim_spaces(line.substr(delimiterPos + 1));
 
             if (isValidKey(key))
-                config_servers.back().setSettings(key, value);
+                configServers.back().setSettings(key, value);
             else
                 throw std::runtime_error("Invalid key in configuration: " + key);
         }
         else if (line.substr(0, 8) == "location")
-            config_servers.back().setServerLocations(parseLocation(file, line));
+            configServers.back().setServerLocations(parseLocation(file, line));
         else
             throw std::runtime_error("Invalid \"Key=value syntax\" in configuration! " + line);
     }
@@ -55,7 +55,7 @@ bool Config::setSyntax(std::string &line)
     if (line == "server")
     {
         Server server;
-        config_servers.push_back(server);
+        configServers.push_back(server);
         return true;
     }
     else if (line.empty() || line[0] == '#')
@@ -75,7 +75,7 @@ bool Config::setSyntax(std::string &line)
 
 std::string Config::get(const std::string &key) const
 {
-    std::unordered_map<std::string, std::string> last_settings = config_servers.back().getSettings();
+    std::unordered_map<std::string, std::string> last_settings = configServers.back().getSettings();
     std::unordered_map<std::string, std::string>::const_iterator it = last_settings.find(key);
     if (it != last_settings.end())
         return it->second;
@@ -84,8 +84,8 @@ std::string Config::get(const std::string &key) const
 
 Server::Location Config::getFromLocation(const Path &path) const
 {
-    // Server last_server = config_servers.back();
-    std::unordered_map<Path, Server::Location> last_server_location = config_servers.back().getServerLocations();
+    // Server last_server = configServers.back();
+    std::unordered_map<Path, Server::Location> last_server_location = configServers.back().getServerLocations();
     std::unordered_map<Path, Server::Location>::const_iterator it = last_server_location.find("/");
     if (it != last_server_location.end())
         return it->second;
