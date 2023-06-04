@@ -1,9 +1,11 @@
-#include "Config.hpp"
+#include <Config.hpp>
+#include <Network.hpp>
 #include <string>
 
 Config::Config(const char *filePath)
 {
     load(filePath);
+    Network::initServersSockets(configServers);
 }
 
 Config::~Config() {}
@@ -22,7 +24,6 @@ void Config::load(const char *path)
     while (std::getline(file, line))
     {
         line = trim_spaces(line);
-        // std::cout << "line : " << line << "| server.size() : " << configServers.size() << std::endl;
         if (setSyntax(line))
             continue; // Skip empty lines, comments, and block delimiters
         size_t delimiterPos = line.find('=');
@@ -150,43 +151,21 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
 
             if (isValidLocationKey(key) && !value.empty())
             {
-
                 // Set the corresponding parameters in the Location object
                 if (key == "allow_methods")
-                {
-                    // Handle allow_methods setting
                     parseMethods(location, value);
-                }
                 else if (key == "redirect")
-                {
-                    // Handle redirect setting
                     location.redirection = parseRedirection(value);
-                }
                 else if (key == "root")
-                {
-                    // Handle root setting
                     location.root = value;
-                }
                 else if (key == "autoindex")
-                {
-                    // Handle autoindex setting
                     location.autoindex = (value == "on");
-                }
                 else if (key == "default")
-                {
-                    // Handle default setting
                     location.defaultFile = value;
-                }
                 else if (key == "upload")
-                {
-                    // Handle upload setting
                     location.uploadRoute = value;
-                }
                 else if (key == "cgi")
-                {
-                    // Handle upload setting
                     location.cgi.insert(parseCgi(value));
-                }
             }
             else
                 throw std::runtime_error("Invalid key in location block: " + key);

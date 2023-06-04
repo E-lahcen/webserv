@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/05/29 17:59:02 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/04 16:55:07 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,19 @@
 
 const int Network::mProtocol = getprotobyname("tcp")->p_proto;
 
+Network::Network(Servers &servers)
+{
+	initServersSockets(servers);
+}
+
+Network::~Network() {}
+
 void Network::initServersSockets(Servers &servers)
 {
 
 	for (Servers::iterator server = servers.begin();
 		 server != servers.end(); ++server)
 	{
-
 		createSocket(server->socketFd, servers);
 		makeServerListen(server, servers);
 	}
@@ -29,7 +35,6 @@ void Network::initServersSockets(Servers &servers)
 
 void Network::createSocket(Socket &socketFd, Servers &servers)
 {
-
 	socketFd = socket(mAddrFamily, mSockType, mProtocol);
 	if (socketFd == -1)
 	{
@@ -73,11 +78,16 @@ void Network::makeServerListen(const ServerRef &server, Servers &servers)
 {
 
 	addrinfo *serverAddr = getServerAddrInfo(server, servers);
+	int new_socket;
+	int valread;
+	char hello[] = "HTTP/1.0 200 OK\r\n"
+				   "Server: webserver-c\r\n"
+				   "Content-type: text/html\r\n\r\n"
+				   "<h1>hello from server</h1>\r\n";
 
 	if (bind(server->socketFd, serverAddr->ai_addr,
-			 serverAddr->ai_addrlen) == -1)
+			 serverAddr->ai_addrlen) < 0)
 	{
-
 		std::string error = "failed to bind socket to ";
 		error += server->hostname + ':' + server->port;
 		clearServersSockets(servers);
@@ -91,6 +101,26 @@ void Network::makeServerListen(const ServerRef &server, Servers &servers)
 		error += server->hostname + ':' + server->port;
 		clearServersSockets(servers);
 		throwErrnoException(error);
+	}
+
+	// Accepting clients requests
+	while (1)
+	{
+		printf("\n+++++++ Waiting for new connection ++++++++\n\n");
+		if ((new_socket = accept(server->socketFd, serverAddr->ai_addr, &serverAddr->ai_addrlen)) < 0)
+		{
+			std::string error = "failed to accept socket of ";
+			error += server->hostname + ':' + server->port;
+			clearServersSockets(servers);
+			throwErrnoException(error);
+		}
+
+		char buffer[1024] = {0};
+		valread = read(new_socket, buffer, 1024);
+		printf("%s\n", buffer);
+		write(new_socket, hello, strlen(hello));
+		printf("------------------Hello message sent-------------------\n");
+		close(new_socket);
 	}
 
 	// Log::socketBinding(server->socketFd);

@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:04 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/05/27 11:50:15 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/04 11:35:33 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,13 @@ Server::~Server() {}
 // Location constructor initialisation
 Server::Location::Location() : get(false), post(false), del(false), autoindex(false) {}
 
-void Server::setSettings(std::string &s1, std::string &s2)
+void Server::setSettings(std::string &key, std::string &value)
 {
-    settings[s1] = s2;
+    settings[key] = value;
+    if ( key == "listen" )
+        parseHostnamePort(value);
+    if ( key == "error_page" )
+        parseErrorPage(value);
 }
 
 void Server::setServerLocations(std::pair<Path, Location> s1)
@@ -37,6 +41,26 @@ std::unordered_map<std::string, std::string> Server::getSettings() const
 std::unordered_map<Path, Server::Location> Server::getServerLocations() const
 {
     return serverLocations;
+}
+
+void    Server::parseHostnamePort( std::string& value )
+{
+    std::size_t colonPos = value.find(':');
+    if (colonPos != std::string::npos)
+    {
+        hostname = value.substr(0, colonPos);
+        port = value.substr(colonPos + 1);
+    }
+    else
+        std::runtime_error("Invalid hostname:port format in configuration file!");
+}
+
+void    Server::parseErrorPage( std::string& value )
+{
+    std::stringstream   ss(value);
+
+    ss >> errorPage.first;
+    ss >> errorPage.second;
 }
 
 Server::Location::~Location() {}

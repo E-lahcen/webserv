@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:19 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/05/29 16:52:52 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/04 16:59:22 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,39 +28,42 @@ static short Brackets[2] = {0, 0};
 
 class Server
 {
-public:
-	// public attributes
-	Socket socketFd;
-	std::string hostname;
-	std::string port;
-
-	// Location class
-	class Location
-	{
 	public:
-		Location();
-		Path route;
-		// http methods
-		bool get;
-		bool post;
-		bool del;
-		// end of http methods
-		std::pair<StatusNbr, Path> redirection;
-		Path root;
-		bool autoindex;
-		Path defaultFile;
-		Path uploadRoute;
-		CgiPair cgi;
-		~Location();
-	};
-	Server();
-	void setSettings(std::string &s1, std::string &s2);
-	void setServerLocations(std::pair<Path, Location> s1);
-	std::unordered_map<std::string, std::string> getSettings() const;
-	std::unordered_map<Path, Location> getServerLocations() const;
-	~Server();
+		// public attributes
+		Socket socketFd;
+		std::string hostname;
+		std::string port;
+		std::pair<StatusNbr, Path> errorPage;
 
-private:
-	std::unordered_map<std::string, std::string> settings;
-	std::unordered_map<Path, Location> serverLocations;
+		// Location class
+		class Location
+		{
+			public:
+				Location();
+				Path route;
+				// http methods
+				bool get;
+				bool post;
+				bool del;
+				// end of http methods
+				std::pair<StatusNbr, Path> redirection;
+				Path root;
+				bool autoindex;
+				Path defaultFile;
+				Path uploadRoute;
+				CgiPair cgi;
+				~Location();
+		};
+		Server();
+		void setSettings(std::string &s1, std::string &s2);
+		void setServerLocations(std::pair<Path, Location> s1);
+		std::unordered_map<std::string, std::string> getSettings() const;
+		std::unordered_map<Path, Location> getServerLocations() const;
+		void	parseHostnamePort( std::string& );
+		void	parseErrorPage( std::string& );
+		~Server();
+
+	private:
+		std::unordered_map<std::string, std::string> settings;
+		std::unordered_map<Path, Location> serverLocations;
 };
