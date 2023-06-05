@@ -6,11 +6,11 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:04 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/04 11:35:33 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/05 16:17:45 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include <Server.hpp>
 
 Server::Server() {}
 
@@ -21,11 +21,14 @@ Server::Location::Location() : get(false), post(false), del(false), autoindex(fa
 
 void Server::setSettings(std::string &key, std::string &value)
 {
-    settings[key] = value;
-    if ( key == "listen" )
+    if (key == "server_name")
+        serverName = value;
+    if (key == "listen")
         parseHostnamePort(value);
-    if ( key == "error_page" )
+    else if (key == "error_page")
         parseErrorPage(value);
+    else if (key == "client_body_size_max")
+        setClientBodySizeMax(value);
 }
 
 void Server::setServerLocations(std::pair<Path, Location> s1)
@@ -33,34 +36,54 @@ void Server::setServerLocations(std::pair<Path, Location> s1)
     serverLocations.insert(s1);
 }
 
-std::unordered_map<std::string, std::string> Server::getSettings() const
-{
-    return settings;
-}
-
 std::unordered_map<Path, Server::Location> Server::getServerLocations() const
 {
     return serverLocations;
 }
 
-void    Server::parseHostnamePort( std::string& value )
+size_t Server::getBodySizeMax(void)
+{
+    return clientBodySizeMax;
+}
+
+void Server::setClientBodySizeMax(std::string &value)
+{
+    if (!is_number(value))
+        throw std::runtime_error("Invalid Client Body Size Max input : " + value);
+
+    std::stringstream ss;
+
+    ss << value;
+    ss >> clientBodySizeMax;
+    ss.clear();
+}
+
+void Server::parseHostnamePort(std::string &value)
 {
     std::size_t colonPos = value.find(':');
+    std::string tmpPort;
+
     if (colonPos != std::string::npos)
     {
         hostname = value.substr(0, colonPos);
-        port = value.substr(colonPos + 1);
+        tmpPort = value.substr(colonPos + 1);
+        (is_number(tmpPort) && std::stoi(tmpPort) <= MAX_PORT_NUMBER) ? port = tmpPort : throw std::runtime_error("Invalid port format in configuration file!");
     }
     else
-        std::runtime_error("Invalid hostname:port format in configuration file!");
+        throw std::runtime_error("Invalid hostname:port format in configuration file!");
 }
 
-void    Server::parseErrorPage( std::string& value )
+void Server::parseErrorPage(std::string &value)
 {
-    std::stringstream   ss(value);
+    std::stringstream ss(value);
+    StatusNbr tmpStat;
+    Path tmpPath;
+    std::string tmp;
 
-    ss >> errorPage.first;
-    ss >> errorPage.second;
+    ss >> tmp;
+    (is_number(tmp) && tmp.length() == 3) ? tmpStat = std::stoi(tmp) : throw std::runtime_error("Invalid status error number!");
+    ss >> tmpPath;
+    errorPage[tmpStat] = tmpPath;
 }
 
 Server::Location::~Location() {}

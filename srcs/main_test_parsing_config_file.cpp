@@ -6,10 +6,10 @@ int main(int ac, char **av)
     {
         (void)ac;
         Config config(av[1]);
-        std::string serverName = config.get("server_name");
-        std::string listen = config.get("listen");
-        std::string errorPage = config.get("error_page");
-        std::string clientBodySizeMax = config.get("client_body_size_max");
+        std::string serverName = config.configServers.back().serverName;
+        std::string hostname = config.configServers.back().hostname;
+        std::string errorPage = config.configServers.back().errorPage.begin()->second;
+        size_t clientBodySizeMax = config.configServers.back().clientBodySizeMax;
         bool autoindex = config.getFromLocation("/").autoindex;
         Path defaultF = config.getFromLocation("/").defaultFile;
         bool get = config.getFromLocation("/").get;
@@ -19,7 +19,7 @@ int main(int ac, char **av)
 
         // Use the retrieved configuration settings
         std::cout << "Server Name: " << serverName << std::endl;
-        std::cout << "Listen: " << listen << std::endl;
+        std::cout << "Hostname: " << hostname << std::endl;
         std::cout << "Error Page: " << errorPage << std::endl;
         std::cout << "Client Body Size Max: " << clientBodySizeMax << std::endl;
         std::cout << "Location : / , autoindex = " << autoindex << std::endl;

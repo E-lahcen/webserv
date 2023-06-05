@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:19 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/04 16:59:22 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/05 16:11:17 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,53 +17,69 @@
 #include <sstream>
 #include <unordered_map>
 
+#define MAX_PORT_NUMBER 65535
+
 const std::string validKeys[] = {"server_name", "listen", "error_page", "client_body_size_max"};
 const std::string validLocationKeys[] = {"allow_methods", "redirect", "root", "autoindex", "default", "cgi", "upload"};
+
 typedef short StatusNbr;
 typedef std::string Path;
 typedef std::string Extension;
 typedef std::unordered_map<Extension, Path> CgiPair;
+typedef std::unordered_map<StatusNbr, Path> redirectionPair;
+typedef std::unordered_map<StatusNbr, Path> errorPagePair;
 typedef int Socket;
 static short Brackets[2] = {0, 0};
 
 class Server
 {
+public:
+	// public attributes
+	std::string serverName;
+	Socket socketFd;
+	std::string hostname;
+	std::string port;
+	size_t clientBodySizeMax;
+	errorPagePair errorPage;
+
+	// Location class
+	class Location
+	{
 	public:
-		// public attributes
-		Socket socketFd;
-		std::string hostname;
-		std::string port;
-		std::pair<StatusNbr, Path> errorPage;
+		Location();
+		Path route;
+		// http methods
+		bool get;
+		bool post;
+		bool del;
+		// end of http methods
+		redirectionPair redirection;
+		Path root;
+		bool autoindex;
+		Path defaultFile;
+		Path uploadRoute;
+		CgiPair cgi;
+		~Location();
+	};
+	Server();
 
-		// Location class
-		class Location
-		{
-			public:
-				Location();
-				Path route;
-				// http methods
-				bool get;
-				bool post;
-				bool del;
-				// end of http methods
-				std::pair<StatusNbr, Path> redirection;
-				Path root;
-				bool autoindex;
-				Path defaultFile;
-				Path uploadRoute;
-				CgiPair cgi;
-				~Location();
-		};
-		Server();
-		void setSettings(std::string &s1, std::string &s2);
-		void setServerLocations(std::pair<Path, Location> s1);
-		std::unordered_map<std::string, std::string> getSettings() const;
-		std::unordered_map<Path, Location> getServerLocations() const;
-		void	parseHostnamePort( std::string& );
-		void	parseErrorPage( std::string& );
-		~Server();
+	// Getters
+	size_t getBodySizeMax(void);
+	std::unordered_map<Path, Location> getServerLocations() const;
 
-	private:
-		std::unordered_map<std::string, std::string> settings;
-		std::unordered_map<Path, Location> serverLocations;
+	// Setters
+	void setSettings(std::string &s1, std::string &s2);
+	void setServerLocations(std::pair<Path, Location> s1);
+	void setClientBodySizeMax(std::string &value);
+
+	// Parsers
+	void parseHostnamePort(std::string &);
+	void parseErrorPage(std::string &);
+
+	~Server();
+
+private:
+	std::unordered_map<Path, Location> serverLocations;
 };
+
+#include <utils.hpp>

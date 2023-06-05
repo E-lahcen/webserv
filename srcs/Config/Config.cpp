@@ -5,7 +5,7 @@
 Config::Config(const char *filePath)
 {
     load(filePath);
-    Network::initServersSockets(configServers);
+    // Network::initServersSockets(configServers);
 }
 
 Config::~Config() {}
@@ -72,15 +72,6 @@ bool Config::setSyntax(std::string &line)
         return true;
     }
     return false;
-}
-
-std::string Config::get(const std::string &key) const
-{
-    std::unordered_map<std::string, std::string> last_settings = configServers.back().getSettings();
-    std::unordered_map<std::string, std::string>::const_iterator it = last_settings.find(key);
-    if (it != last_settings.end())
-        return it->second;
-    throw std::runtime_error("Key not found in configuration: " + key);
 }
 
 Server::Location Config::getFromLocation(const Path &path) const
@@ -155,7 +146,7 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
                 if (key == "allow_methods")
                     parseMethods(location, value);
                 else if (key == "redirect")
-                    location.redirection = parseRedirection(value);
+                    location.redirection.insert(parseRedirection(value));
                 else if (key == "root")
                     location.root = value;
                 else if (key == "autoindex")
