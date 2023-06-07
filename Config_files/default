@@ -3,7 +3,7 @@ server
     
 	server_name=test
 
-	listen=127.0.0.1:8081
+	listen=127.0.0.1:8080
 
 	client_body_size_max=1002443434
 
@@ -54,10 +54,11 @@ server
     
 	server_name=test2
 
-	listen=localhost:8082
+	listen=localhost:8083
 
 	client_body_size_max=10034
 	error_page=404 /error_page.html
+	error_page=405 /maerror_page.html
 
 
 	location / 

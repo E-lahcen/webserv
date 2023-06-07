@@ -13,6 +13,7 @@ OBJSDIR		:=	objs
 CONFIGDIR	:=	Config
 SERVERDIR	:=	Server
 UTILSDIR	:=	Utils
+REQUESTDIR	:=	Request
 
 # sources
 
@@ -24,10 +25,17 @@ CPPSERVER	:=	Server.cpp
 
 CPPUTILS	:=	utils.cpp
 
-CFILES		:=	main_test_parsing_config_file.cpp \
+CPPREQUEST	:=	request.cpp \
+				geters.cpp  \
+				parsing_rquest.cpp \
+				util_request.cpp \
+				upload.cpp
+
+CFILES		:=	main_test_request_config.cpp \
 				$(foreach F,$(CPPCONFIG),$(CONFIGDIR)/$(F)) \
 				$(foreach F,$(CPPSERVER),$(SERVERDIR)/$(F)) \
 				$(foreach F,$(CPPUTILS),$(UTILSDIR)/$(F)) \
+				$(foreach F,$(CPPREQUEST),$(REQUESTDIR)/$(F))
 
 SRCS		:= $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
 

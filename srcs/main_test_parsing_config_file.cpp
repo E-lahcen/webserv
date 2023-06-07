@@ -8,7 +8,7 @@ int main(int ac, char **av)
         Config config(av[1]);
         std::string serverName = config.configServers.back().serverName;
         std::string hostname = config.configServers.back().hostname;
-        std::string errorPage = config.configServers.back().errorPage.begin()->second;
+        std::string errorPage = config.configServers.back().errorPage[405];
         size_t clientBodySizeMax = config.configServers.back().clientBodySizeMax;
         bool autoindex = config.getFromLocation("/").autoindex;
         Path defaultF = config.getFromLocation("/").defaultFile;

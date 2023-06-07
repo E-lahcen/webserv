@@ -5,7 +5,7 @@
 Config::Config(const char *filePath)
 {
     load(filePath);
-    // Network::initServersSockets(configServers);
+    Network::initServersSockets(configServers);
 }
 
 Config::~Config() {}
@@ -146,7 +146,7 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
                 if (key == "allow_methods")
                     parseMethods(location, value);
                 else if (key == "redirect")
-                    location.redirection.insert(parseRedirection(value));
+                    location.redirection = parseRedirection(value);
                 else if (key == "root")
                     location.root = value;
                 else if (key == "autoindex")
@@ -171,12 +171,12 @@ std::pair<StatusNbr, Path> Config::parseRedirection(const std::string &line)
 {
     std::istringstream iss(line);
     Path value;
-    std::string stat;
+    short stat;
     iss >> stat;
     std::getline(iss, value);
-    if (stat.empty() || value.empty())
+    if (!stat || value.empty())
         throw std::runtime_error("Invalid Redirection");
-    return (std::pair<StatusNbr, Path>(std::stoi(stat), value));
+    return (std::pair<StatusNbr, Path>(stat, value));
 }
 
 void Config::parseMethods(Server::Location &location, const std::string &value)

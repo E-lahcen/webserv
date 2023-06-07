@@ -6,15 +6,16 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 16:53:30 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/05 15:31:58 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/07 16:27:14 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <Server.hpp>
 #include <Network.hpp>
 #include <vector>
+
+#include <Server.hpp>
 
 class Config
 {
@@ -43,3 +44,5 @@ private:
 	void parseMethods(Server::Location &, const std::string &);
 	std::pair<Extension, Path> parseCgi(const std::string &);
 };
+
+

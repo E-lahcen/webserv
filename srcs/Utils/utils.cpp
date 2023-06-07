@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 11:55:05 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/05 11:35:02 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/06 11:02:58 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,8 @@ void makeFDNonBlock(int fd)
 
 bool is_number(const std::string &s)
 {
-    return all_of(s.begin(), s.end(), ::isdigit);
+    for (std::string::const_iterator it = s.begin(); it != s.end(); it++)
+        if (!std::isdigit(*it))
+            return false;
+    return true;
 }

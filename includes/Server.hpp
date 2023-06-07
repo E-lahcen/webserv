@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:19 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/05 16:11:17 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/07 16:16:45 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,9 @@ typedef short StatusNbr;
 typedef std::string Path;
 typedef std::string Extension;
 typedef std::unordered_map<Extension, Path> CgiPair;
-typedef std::unordered_map<StatusNbr, Path> redirectionPair;
+typedef std::pair<StatusNbr, Path> redirectionPair;
 typedef std::unordered_map<StatusNbr, Path> errorPagePair;
 typedef int Socket;
-static short Brackets[2] = {0, 0};
 
 class Server
 {

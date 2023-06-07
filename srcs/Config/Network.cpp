@@ -6,14 +6,14 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/05 12:06:11 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/07 18:20:41 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Network.hpp>
 #include <iostream>
 
-const int Network::mProtocol = getprotobyname("tcp")->p_proto;
+const int Network::protocol = getprotobyname("tcp")->p_proto;
 
 Network::Network(Servers &servers)
 {
@@ -31,11 +31,81 @@ void Network::initServersSockets(Servers &servers)
 		createSocket(server->socketFd, servers);
 		makeServerListen(server, servers);
 	}
+
+	addServerFDListenCollection(servers);
+	while (1)
+	{
+		handleNewConnections();
+	}
 }
+
+void Network::addServerFDListenCollection(Servers &servers)
+{
+
+	listenFDCollection.clear();
+
+	Servers::const_iterator server;
+	for (server = servers.begin();
+		 server != servers.end(); ++server)
+	{
+		listenFDCollection[server->socketFd] = *server;
+	}
+}
+
+void Network::handleNewConnections()
+{
+
+	std::unordered_map<Socket, Server>::const_iterator listenFD;
+	for()
+	{
+		FD_SET(i, &tmpreadfds)
+	}
+	select()
+	for (listenFD = listenFDCollection.begin();
+		 listenFD != listenFDCollection.end(); ++listenFD)
+	{
+		try
+		{
+			request	req;
+			int valread;
+			char buffer[30000];
+			
+			Socket newSock = getNewConnectionSock(listenFD->first);
+			requestCollection.push_back(std::make_pair(newSock, req));
+            valread = read(newSock, buffer, 300000);
+			std::cout << buffer << std::endl;
+			
+		}
+		catch (const std::exception &error)
+		{
+			std::cerr << error.what();
+		}
+	}
+}
+
+Socket Network::getNewConnectionSock(Socket listenSock)
+{
+	Socket newSock = accept(listenSock, NULL, NULL);
+	std::cout << "here " << listenSock << std::endl;
+	if (newSock == -1)
+		throwErrnoException("getNewConnectionSock() failed to accept new connection");
+
+	makeFDNonBlock(newSock);
+
+	return newSock;
+}
+
+// void initRequestSocket(const Server &server, const Socket &socket)
+// {
+// 	Request request;
+
+// 	request.setSocket(socket);
+// 	server.requests.push_back(request);
+// }
 
 void Network::createSocket(Socket &socketFd, Servers &servers)
 {
-	socketFd = socket(mAddrFamily, mSockType, mProtocol);
+	socketFd = socket(addrFamily, sockType, protocol);
 	if (socketFd == -1)
 	{
 		clearServersSockets(servers);
@@ -78,12 +148,6 @@ void Network::makeServerListen(const ServerRef &server, Servers &servers)
 {
 
 	addrinfo *serverAddr = getServerAddrInfo(server, servers);
-	int new_socket;
-	int valread;
-	char hello[] = "HTTP/1.0 200 OK\r\n"
-				   "Server: webserver-c\r\n"
-				   "Content-type: text/html\r\n\r\n"
-				   "<h1>hello from server</h1>\r\n";
 
 	if (bind(server->socketFd, serverAddr->ai_addr,
 			 serverAddr->ai_addrlen) < 0)
@@ -103,28 +167,6 @@ void Network::makeServerListen(const ServerRef &server, Servers &servers)
 		throwErrnoException(error);
 	}
 
-	// Accepting clients requests
-	while (1)
-	{
-		printf("\n+++++++ Waiting for new connection ++++++++\n\n");
-		if ((new_socket = accept(server->socketFd, serverAddr->ai_addr, &serverAddr->ai_addrlen)) < 0)
-		{
-			std::string error = "failed to accept socket of ";
-			error += server->hostname + ':' + server->port;
-			clearServersSockets(servers);
-			throwErrnoException(error);
-		}
-
-		char buffer[1024] = {0};
-		valread = read(new_socket, buffer, 1024);
-		printf("%s\n", buffer);
-		write(new_socket, hello, strlen(hello));
-		printf("------------------Hello message sent-------------------\n");
-		close(new_socket);
-	}
-
-	// Log::socketBinding(server->socketFd);
-
 	freeServerAddrInfo(serverAddr);
 }
 
@@ -134,10 +176,10 @@ addrinfo *Network::getServerAddrInfo(const ServerRef &server, Servers &servers)
 	addrinfo hints;
 	// clears hints
 	bzero(&hints, sizeof(hints));
-	hints.ai_flags = mFlags;
-	hints.ai_family = mAddrFamily;
-	hints.ai_socktype = mSockType;
-	hints.ai_protocol = mProtocol;
+	hints.ai_flags = flags;
+	hints.ai_family = addrFamily;
+	hints.ai_socktype = sockType;
+	hints.ai_protocol = protocol;
 
 	addrinfo *resultedAddr = NULL;
 	int successCode = getaddrinfo(server->hostname.c_str(),

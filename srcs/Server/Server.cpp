@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:04 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/05 16:17:45 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/06 11:14:30 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void Server::parseHostnamePort(std::string &value)
     {
         hostname = value.substr(0, colonPos);
         tmpPort = value.substr(colonPos + 1);
-        (is_number(tmpPort) && std::stoi(tmpPort) <= MAX_PORT_NUMBER) ? port = tmpPort : throw std::runtime_error("Invalid port format in configuration file!");
+        (is_number(tmpPort) && std::atoi(tmpPort.c_str()) <= MAX_PORT_NUMBER) ? port = tmpPort : throw std::runtime_error("Invalid port format in configuration file!");
     }
     else
         throw std::runtime_error("Invalid hostname:port format in configuration file!");
@@ -81,7 +81,7 @@ void Server::parseErrorPage(std::string &value)
     std::string tmp;
 
     ss >> tmp;
-    (is_number(tmp) && tmp.length() == 3) ? tmpStat = std::stoi(tmp) : throw std::runtime_error("Invalid status error number!");
+    (is_number(tmp) && tmp.length() == 3) ? tmpStat = std::atoi(tmp.c_str()) : throw std::runtime_error("Invalid status error number!");
     ss >> tmpPath;
     errorPage[tmpStat] = tmpPath;
 }
