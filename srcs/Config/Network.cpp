@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/07 18:20:41 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/10 15:38:26 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ void Network::initServersSockets(Servers &servers)
 	for (Servers::iterator server = servers.begin();
 		 server != servers.end(); ++server)
 	{
-		createSocket(server->socketFd, servers);
+		createListenSocket(server->socketFd, servers);
 		makeServerListen(server, servers);
 	}
 
-	addServerFDListenCollection(servers);
 	while (1)
 	{
+		addServerFDListenCollection(servers);
 		handleNewConnections();
 	}
 }
@@ -54,13 +54,7 @@ void Network::addServerFDListenCollection(Servers &servers)
 
 void Network::handleNewConnections()
 {
-
 	std::unordered_map<Socket, Server>::const_iterator listenFD;
-	for()
-	{
-		FD_SET(i, &tmpreadfds)
-	}
-	select()
 	for (listenFD = listenFDCollection.begin();
 		 listenFD != listenFDCollection.end(); ++listenFD)
 	{
@@ -95,15 +89,7 @@ Socket Network::getNewConnectionSock(Socket listenSock)
 	return newSock;
 }
 
-// void initRequestSocket(const Server &server, const Socket &socket)
-// {
-// 	Request request;
-
-// 	request.setSocket(socket);
-// 	server.requests.push_back(request);
-// }
-
-void Network::createSocket(Socket &socketFd, Servers &servers)
+void Network::createListenSocket(Socket &socketFd, Servers &servers)
 {
 	socketFd = socket(addrFamily, sockType, protocol);
 	if (socketFd == -1)
@@ -286,3 +272,4 @@ void Network::throwAddrInfoError(int errorCode, const std::string &errorMsg)
 
 	throw std::runtime_error(exceptionStr);
 }
+

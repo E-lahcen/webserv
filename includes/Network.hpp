@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:12:12 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/07 17:55:59 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/10 15:37:45 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <unistd.h>
 
 #include <utils.hpp>
+#include <poll.h>
 #include <vector>
 
 class request;
@@ -54,7 +55,7 @@ private:
 	const static int flags = AI_PASSIVE;
 	const static int protocol;
 
-	static void createSocket(Socket &socketID, Servers &servers);
+	static void createListenSocket(Socket &socketID, Servers &servers);
 
 	static void makeSocketReuseAddr(const Socket &socketID, Servers &servers);
 
