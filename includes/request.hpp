@@ -6,12 +6,11 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:13 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/07 17:20:48 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/10 20:19:56 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef request_hpp
-#define request_hpp
+#pragma once
 
 #include <Config.hpp>
 
@@ -89,5 +88,3 @@ std::string GetExtension(std::string type);
 std::string JoinePathToRoot(std::string root, std::string add);
 int CheckHexa(std::string s);
 std::string GetRandomName();
-
-#endif

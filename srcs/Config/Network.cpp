@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/10 15:38:26 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/10 20:14:55 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,49 +30,47 @@ void Network::initServersSockets(Servers &servers)
 	{
 		createListenSocket(server->socketFd, servers);
 		makeServerListen(server, servers);
+		addPollFd(server);
 	}
 
 	while (1)
 	{
 		addServerFDListenCollection(servers);
+		pollMultiplexing(servers);
 		handleNewConnections();
+		handleActions();
 	}
 }
 
 void Network::addServerFDListenCollection(Servers &servers)
 {
 
-	listenFDCollection.clear();
+	serverCollection.clear();
 
 	Servers::const_iterator server;
 	for (server = servers.begin();
 		 server != servers.end(); ++server)
 	{
-		listenFDCollection[server->socketFd] = *server;
+		serverCollection.push_back(*server);
 	}
 }
 
 void Network::handleNewConnections()
 {
-	std::unordered_map<Socket, Server>::const_iterator listenFD;
-	for (listenFD = listenFDCollection.begin();
-		 listenFD != listenFDCollection.end(); ++listenFD)
+	for (size_t i = 0; i < serverCollection.size(); i++)
 	{
-		try
+		// request	req;
+		// Client	client;
+		// int valread;
+		// char buffer[MAX_BUFFER];
+		
+		if (pollFds[i].revents & POLLIN)
 		{
-			request	req;
-			int valread;
-			char buffer[30000];
-			
-			Socket newSock = getNewConnectionSock(listenFD->first);
-			requestCollection.push_back(std::make_pair(newSock, req));
-            valread = read(newSock, buffer, 300000);
-			std::cout << buffer << std::endl;
-			
-		}
-		catch (const std::exception &error)
-		{
-			std::cerr << error.what();
+			Socket newSock = getNewConnectionSock(pollFds[i].fd);
+			initPollFdClient(newSock, serverCollection[i]);
+			// requestCollection.push_back(std::make_pair(newSock, req));
+			// valread = read(newSock, buffer, 300000);
+			// std::cout << buffer << std::endl;
 		}
 	}
 }
@@ -80,12 +78,10 @@ void Network::handleNewConnections()
 Socket Network::getNewConnectionSock(Socket listenSock)
 {
 	Socket newSock = accept(listenSock, NULL, NULL);
-	std::cout << "here " << listenSock << std::endl;
 	if (newSock == -1)
 		throwErrnoException("getNewConnectionSock() failed to accept new connection");
 
 	makeFDNonBlock(newSock);
-
 	return newSock;
 }
 
@@ -152,7 +148,6 @@ void Network::makeServerListen(const ServerRef &server, Servers &servers)
 		clearServersSockets(servers);
 		throwErrnoException(error);
 	}
-
 	freeServerAddrInfo(serverAddr);
 }
 
@@ -273,3 +268,91 @@ void Network::throwAddrInfoError(int errorCode, const std::string &errorMsg)
 	throw std::runtime_error(exceptionStr);
 }
 
+void Network::addPollFd(const ServerRef &server)
+{
+	struct pollfd poll;
+
+	poll.fd = server->socketFd;
+	poll.events = POLLIN;
+	pollFds.push_back(poll);
+}
+
+void Network::pollMultiplexing(Servers &servers)
+{
+	int status;
+
+	if ((status = poll(&pollFds[0], pollFds.size(), -1)) < 1)
+	{
+		clearServersSockets(servers);
+		throw std::runtime_error("Issue in multiplexing using poll!");
+	}
+}
+
+void Network::initPollFdClient(Socket &socket, Server& server)
+{
+	struct pollfd 	clientPollFd;
+	Client			client;
+
+	clientPollFd.fd = socket;
+	clientPollFd.events = POLLIN;
+	
+	client.mySocket = socket;
+	client.myStage = REQUEST;
+	client.myServer = server;
+	
+	pollFds.push_back(clientPollFd);
+	clientCollection.push_back(client);
+}
+
+void Network::handleActions(void)   
+{
+	char hello[] = "HTTP/1.0 200 OK\r\n"
+				"Server: webserver-c\r\n"
+				"Content-type: text/html\r\n\r\n"
+				"<h1>hello from server</h1>\r\n";
+
+	for (size_t j = serverCollection.size(); j < pollFds.size(); j++)
+	{
+		if (pollFds[j].revents & POLLIN)
+		{
+			char buffer[MAX_BUFFER];
+			ssize_t bytesRead = read(pollFds[j].fd, buffer, sizeof(buffer));
+			if (bytesRead == -1)
+			{
+				clientCollection[j - serverCollection.size()].myStage = FINISH;
+				close(pollFds[j].fd);
+				pollFds.erase(pollFds.begin() + j);
+				clientCollection.erase(clientCollection.begin() + j - serverCollection.size());
+				throw std::runtime_error("Issue in read() function!");
+			}
+			else if (bytesRead == 0)
+			{
+				// Client disconnected
+				// std::cout << "Client disconnected" << std::endl;
+				pollFds[j].events = POLLOUT;
+				clientCollection[j - serverCollection.size()].myStage = RESPONSE;
+			}
+			else
+			{
+				// Process the received data
+				std::string receivedData(buffer, bytesRead);
+				// std::cout << "Received: " << receivedData << std::endl;
+				pollFds[j].events = POLLOUT;
+			}
+		}
+		if (pollFds[j].revents & POLLOUT)
+		{
+			ssize_t bytesWritten = write(pollFds[j].fd, hello, strlen(hello));
+			if (bytesWritten == -1)
+				throw std::runtime_error("Error writing to client");
+			else if ((size_t)bytesWritten == strlen(hello))
+			{
+				// printf("------------------Hello message sent-------------------\n");
+				close(pollFds[j].fd);
+				pollFds.erase(pollFds.begin() + j);
+				clientCollection.erase(clientCollection.begin() + j - serverCollection.size()); // 2 erpresent size of server arrays Don't forget to edit it
+				--j;
+			}
+		}
+	}
+}

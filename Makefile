@@ -14,6 +14,7 @@ CONFIGDIR	:=	Config
 SERVERDIR	:=	Server
 UTILSDIR	:=	Utils
 REQUESTDIR	:=	Request
+CLIENTDIR	:=	Client
 
 # sources
 
@@ -23,6 +24,8 @@ CPPCONFIG	:=	Config.cpp \
 
 CPPSERVER	:=	Server.cpp
 
+CPPCLIENT	:=	Client.cpp
+
 CPPUTILS	:=	utils.cpp
 
 CPPREQUEST	:=	request.cpp \
@@ -31,11 +34,12 @@ CPPREQUEST	:=	request.cpp \
 				util_request.cpp \
 				upload.cpp
 
-CFILES		:=	main_test_poll.cpp \
+CFILES		:=	main_test_request_config.cpp \
 				$(foreach F,$(CPPCONFIG),$(CONFIGDIR)/$(F)) \
 				$(foreach F,$(CPPSERVER),$(SERVERDIR)/$(F)) \
 				$(foreach F,$(CPPUTILS),$(UTILSDIR)/$(F)) \
-				$(foreach F,$(CPPREQUEST),$(REQUESTDIR)/$(F))
+				$(foreach F,$(CPPREQUEST),$(REQUESTDIR)/$(F)) \
+				$(foreach F,$(CPPCLIENT),$(CLIENTDIR)/$(F))
 
 SRCS		:= $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
 

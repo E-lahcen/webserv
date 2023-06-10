@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:32 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/08 15:27:49 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/10 21:30:38 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ int request::my_main()
                     std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\nHello";
                     write(clientSocket, response.c_str(), response.length());
                     std::cout << "Response sent to client" << std::endl;
+                    
                 } else if (bytesRead == 0) {
                     // Client disconnected
                     std::cout << "Client disconnected" << std::endl;
@@ -156,14 +157,14 @@ int main(int ac, char **av)
     {
         (void)ac;
         // (void)av;
-        // request a;
-        Config config(av[1]);
-        // a.my_main();
+        request a;
+        // Config config(av[1]);
+        a.my_main();
         // a.printHeader();
         // a.GetRequest(config);
         // if (a.GeterMethod() == "GET")
         // {
-        //     // a.printHeader()
+        //     a.printHeader();
         // }
     }
     catch (const std::exception &e)

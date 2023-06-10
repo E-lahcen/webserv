@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 19:15:44 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/10 15:39:21 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/10 16:12:48 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int main() {
 
         struct pollfd pollFd;
         pollFd.fd = server_fd;
-        pollFd.events = POLLIN | POLLOUT;
+        pollFd.events = POLLIN;
         pollFds.push_back(pollFd);
     }
 
