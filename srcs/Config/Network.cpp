@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/10 20:14:55 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/11 13:38:48 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,71 +194,6 @@ void Network::clearServersSockets(Servers &servers)
 	}
 }
 
-std::string Network::sockAddrToName(const sockaddr *addr, socklen_t addrLen)
-{
-
-	// creates 2 buffers that are large enough
-	// to hold any hostname and port
-	// the hostname and port of the addr parameter
-	// are stored by getnameinfo in
-	// these 2 buffers
-	char hostname[NI_MAXHOST];
-	char port[NI_MAXSERV];
-
-	int successCode = getnameinfo(addr, addrLen, hostname,
-								  sizeof(hostname), port, sizeof(port),
-								  // gets hostname and port in numeric format
-								  NI_NUMERICHOST | NI_NUMERICSERV);
-
-	if (successCode)
-		throwAddrInfoError(successCode,
-						   "failed to convert socket to name");
-
-	return (std::string(hostname) + ':' + port);
-}
-
-std::string Network::getSocketServerName(const Socket sock)
-{
-
-	// server's socket address will be stored here
-	// by getsockname
-	sockaddr_storage serverAddr;
-	socklen_t serverAddrLen = sizeof(serverAddr);
-
-	if (getsockname(sock,
-					reinterpret_cast<sockaddr *>(&serverAddr),
-					&serverAddrLen) == -1)
-	{
-
-		throwErrnoException("failed to get socket's server name");
-	}
-
-	std::string serverName = sockAddrToName(reinterpret_cast<sockaddr *>(&serverAddr), serverAddrLen);
-
-	return serverName;
-}
-
-std::string Network::getSocketClientName(const Socket sock)
-{
-
-	// client's socket address will be stored here
-	// by getpeername
-	sockaddr_storage clientAddr;
-	socklen_t clientAddrLen = sizeof(clientAddr);
-
-	if (getpeername(sock,
-					reinterpret_cast<sockaddr *>(&clientAddr),
-					&clientAddrLen) == -1)
-	{
-
-		throwErrnoException("failed to get socket's client name");
-	}
-
-	std::string clientName = sockAddrToName(reinterpret_cast<sockaddr *>(&clientAddr), clientAddrLen);
-
-	return clientName;
-}
-
 void Network::throwAddrInfoError(int errorCode, const std::string &errorMsg)
 {
 
@@ -322,6 +257,7 @@ void Network::handleActions(void)
 				clientCollection[j - serverCollection.size()].myStage = FINISH;
 				close(pollFds[j].fd);
 				pollFds.erase(pollFds.begin() + j);
+				delete clientCollection[j - serverCollection.size()].myRequest;
 				clientCollection.erase(clientCollection.begin() + j - serverCollection.size());
 				throw std::runtime_error("Issue in read() function!");
 			}
@@ -336,7 +272,9 @@ void Network::handleActions(void)
 			{
 				// Process the received data
 				std::string receivedData(buffer, bytesRead);
-				// std::cout << "Received: " << receivedData << std::endl;
+				clientCollection[j - serverCollection.size()].myBuffer += receivedData;
+				clientCollection[j - serverCollection.size()].processRequest();
+				// std::cout << "Received: " << receivedData << 	std::endl;
 				pollFds[j].events = POLLOUT;
 			}
 		}
@@ -350,6 +288,7 @@ void Network::handleActions(void)
 				// printf("------------------Hello message sent-------------------\n");
 				close(pollFds[j].fd);
 				pollFds.erase(pollFds.begin() + j);
+				delete clientCollection[j - serverCollection.size()].myRequest;
 				clientCollection.erase(clientCollection.begin() + j - serverCollection.size()); // 2 erpresent size of server arrays Don't forget to edit it
 				--j;
 			}

@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:19 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/07 16:16:45 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/11 12:15:45 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef std::pair<StatusNbr, Path> redirectionPair;
 typedef std::unordered_map<StatusNbr, Path> errorPagePair;
 typedef int Socket;
 
-class Server
+class	Server
 {
 public:
 	// public attributes

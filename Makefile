@@ -38,8 +38,8 @@ CFILES		:=	main_test_request_config.cpp \
 				$(foreach F,$(CPPCONFIG),$(CONFIGDIR)/$(F)) \
 				$(foreach F,$(CPPSERVER),$(SERVERDIR)/$(F)) \
 				$(foreach F,$(CPPUTILS),$(UTILSDIR)/$(F)) \
-				$(foreach F,$(CPPREQUEST),$(REQUESTDIR)/$(F)) \
-				$(foreach F,$(CPPCLIENT),$(CLIENTDIR)/$(F))
+				$(foreach F,$(CPPCLIENT),$(CLIENTDIR)/$(F)) \
+				$(foreach F,$(CPPREQUEST),$(REQUESTDIR)/$(F))
 
 SRCS		:= $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
 

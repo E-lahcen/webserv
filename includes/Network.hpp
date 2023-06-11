@@ -6,15 +6,15 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:12:12 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/10 20:18:05 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/11 10:11:45 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <Config.hpp>
-#include <Server.hpp>
 #include <request.hpp>
+#include <Server.hpp>
+#include <Config.hpp>
 #include <Client.hpp>
 
 #include <fcntl.h>
@@ -28,13 +28,12 @@
 #include <utils.hpp>
 #include <poll.h>
 #include <vector>
-#include <poll.h>
 
 #define	MAX_BUFFER	1024
 
 
-class request;
-class Client;
+class	request;
+class	Client;
 
 typedef std::vector<Server> Servers;
 typedef Servers::iterator ServerRef;
@@ -66,11 +65,9 @@ class Network
 		static void makeServerListen(const ServerRef &server, Servers &servers);
 		static addrinfo *getServerAddrInfo(const ServerRef &server, Servers &servers);
 		static void freeServerAddrInfo(addrinfo *addr);
-		static std::string sockAddrToName(const sockaddr *addr, socklen_t addrLen);
 		static void throwAddrInfoError(int errorCode, const std::string &errorMsg);
 		static void addServerFDListenCollection(Servers &servers);
 		static Socket getNewConnectionSock(Socket listenSock);
-		static void initRequestSocket(const Server &server, const Socket &socket);
 		static void handleNewConnections();
 		static void addPollFd( const ServerRef &server );
 		static void pollMultiplexing( Servers& );

@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:13 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/10 20:19:56 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/11 13:27:53 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,7 @@ class request
         std::string method;
         std::string uri;
         std::string version;
-        std::string header;
         //body
-        std::string body;
         std::vector<std::pair<std::string, std::string> > Multipart;
         //
         size_t BodySizeMax;
@@ -50,6 +48,8 @@ class request
         std::string path;
         int StatutCode;
     public:
+        std::string header;
+        std::string body;
         //for method Get
         std::string GeterMethod() const;
         std::string GeterUri() const;
@@ -86,5 +86,5 @@ class request
 
 std::string GetExtension(std::string type);
 std::string JoinePathToRoot(std::string root, std::string add);
-int CheckHexa(std::string s);
+int         CheckHexa(std::string s);
 std::string GetRandomName();
