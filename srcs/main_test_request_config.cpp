@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:32 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/11 14:27:03 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/11 15:12:24 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,9 +235,9 @@ int main(int ac, char **av)
     {
         (void)ac;
         // (void)av;
-        request a;
-        // Config config(av[1]);
-        a.my_main();
+        // request a;
+        Config config(av[1]);
+        // a.my_main();
         // a.printHeader();
         // a.GetRequest(config);
         // if (a.GeterMethod() == "GET")

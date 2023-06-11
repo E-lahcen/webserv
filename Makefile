@@ -34,7 +34,7 @@ CPPREQUEST	:=	request.cpp \
 				util_request.cpp \
 				upload.cpp
 
-CFILES		:=	main_test_request_config.cpp \
+CFILES		:=	main_test_poll.cpp \
 				$(foreach F,$(CPPCONFIG),$(CONFIGDIR)/$(F)) \
 				$(foreach F,$(CPPSERVER),$(SERVERDIR)/$(F)) \
 				$(foreach F,$(CPPUTILS),$(UTILSDIR)/$(F)) \
