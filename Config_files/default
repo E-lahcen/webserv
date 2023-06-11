@@ -1,11 +1,11 @@
 server
 {
     
-	server_name=test
+	server_name=www.exemple.com
 
 	listen=127.0.0.1:8080
 
-	client_body_size_max=1002443434
+	client_body_size_max=1844674407370955161556465498498
 
 	error_page=404 /error_page.html
 
@@ -14,9 +14,9 @@ server
 
 		allow_methods=GET	POST
 
-		redirect=303 /redirect.html
+		# redirect=303 /redirect.html
 
-		root=/path/to/dir
+		root=/Users/ydahni/Desktop/webserv/root
 		
 		autoindex=on
 
@@ -24,7 +24,7 @@ server
 
 		cgi=.py /bin/python3
 
-		upload=/goinfre
+		upload=/upload
 
 	}
 
@@ -54,9 +54,9 @@ server
     
 	server_name=test2
 
-	listen=localhost:8083
+	listen=127.0.0.1:8081
 
-	client_body_size_max=10034
+	client_body_size_max=99999999999
 	error_page=404 /error_page.html
 	error_page=405 /maerror_page.html
 
@@ -66,9 +66,9 @@ server
 
 		allow_methods=GET	POST
 
-		redirect=303 /redirect.html
+		# redirect=303 /redirect.html
 
-		root=/path/to/dir
+		root=/Users/ydahni/Desktop/webserv/root
 		
 		autoindex=on
 
@@ -76,7 +76,7 @@ server
 
 		cgi=.py /bin/python3
 
-		upload=/goinfre
+		upload=/upload
 
 	}
 
@@ -99,5 +99,326 @@ server
 
 	}
 
+
 }
+
+
+
+server
+{
+    
+	server_name=test
+
+	listen=127.0.0.1:8082
+
+	client_body_size_max=1002443434
+
+	error_page=404 /error_page.html
+
+	location / 
+    {
+
+		allow_methods=GET	POST
+
+		# redirect=303 /redirect.html
+
+		root=/Users/ydahni/Desktop/webserv/root
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.py /bin/python3
+
+		upload=/upload
+
+	}
+
+	location /a 
+    {
+
+		allow_methods=GET POST DELETE
+
+		redirect=301 /redirect.html
+
+		root=/path/to/dir
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.py /bin/python3
+
+		upload=/goinfre
+
+	}
+
+}
+
+server
+{
+    
+	server_name=test2
+
+	listen=127.0.0.1:8083
+
+	client_body_size_max=99999999999
+	error_page=404 /error_page.html
+	error_page=405 /maerror_page.html
+
+
+	location / 
+    {
+
+		allow_methods=GET	POST
+
+		# redirect=303 /redirect.html
+
+		root=/Users/ydahni/Desktop/webserv/root
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.py /bin/python3
+
+		upload=/upload
+
+	}
+
+	location /a 
+    {
+
+		allow_methods=GET POST DELETE
+
+		redirect=301 /redirect.html
+
+		root=/path/to/dir
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.php /bin/php
+
+		upload=/goinfre
+
+	}
+
+
+}
+
+
+
+server
+{
+    
+	server_name=test
+
+	listen=127.0.0.1:8084
+
+	client_body_size_max=1002443434
+
+	error_page=404 /error_page.html
+
+	location / 
+    {
+
+		allow_methods=GET	POST
+
+		# redirect=303 /redirect.html
+
+		root=/Users/ydahni/Desktop/webserv/root
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.py /bin/python3
+
+		upload=/upload
+
+	}
+
+	location /a 
+    {
+
+		allow_methods=GET POST DELETE
+
+		redirect=301 /redirect.html
+
+		root=/path/to/dir
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.py /bin/python3
+
+		upload=/goinfre
+
+	}
+
+}
+
+server
+{
+    
+	server_name=test2
+
+	listen=127.0.0.1:8085
+
+	client_body_size_max=99999999999
+	error_page=404 /error_page.html
+	error_page=405 /maerror_page.html
+
+
+	location / 
+    {
+
+		allow_methods=GET	POST
+
+		# redirect=303 /redirect.html
+
+		root=/Users/ydahni/Desktop/webserv/root
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.py /bin/python3
+
+		upload=/upload
+
+	}
+
+	location /a 
+    {
+
+		allow_methods=GET POST DELETE
+
+		redirect=301 /redirect.html
+
+		root=/path/to/dir
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.php /bin/php
+
+		upload=/goinfre
+
+	}
+
+
+}
+
+
+
+server
+{
+    
+	server_name=test
+
+	listen=127.0.0.1:8086
+
+	client_body_size_max=1002443434
+
+	error_page=404 /error_page.html
+
+	location / 
+    {
+
+		allow_methods=GET	POST
+
+		# redirect=303 /redirect.html
+
+		root=/Users/ydahni/Desktop/webserv/root
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.py /bin/python3
+
+		upload=/upload
+
+	}
+
+	location /a 
+    {
+
+		allow_methods=GET POST DELETE
+
+		redirect=301 /redirect.html
+
+		root=/path/to/dir
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.py /bin/python3
+
+		upload=/goinfre
+
+	}
+
+}
+
+server
+{
+    
+	server_name=test2
+
+	listen=127.0.0.1:8087
+
+	client_body_size_max=99999999999
+	error_page=404 /error_page.html
+	error_page=405 /maerror_page.html
+
+
+	location / 
+    {
+
+		allow_methods=GET	POST
+
+		# redirect=303 /redirect.html
+
+		root=/Users/ydahni/Desktop/webserv/root
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.py /bin/python3
+
+		upload=/upload
+
+	}
+
+	location /a 
+    {
+
+		allow_methods=GET POST DELETE
+
+		redirect=301 /redirect.html
+
+		root=/path/to/dir
+		
+		autoindex=on
+
+		default=/default.html
+
+		cgi=.php /bin/php
+
+		upload=/goinfre
+
+	}
+
+
+}
+
+
 

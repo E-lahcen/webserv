@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Network.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/11 15:06:36 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/11 17:48:18 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,8 @@ Network::Network(Servers &servers)
 
 Network::~Network() {}
 
-void Network::initServersSockets(Servers &servers)
-{
-
+void Network::initServersSockets(Servers& servers)
+{	
 	for (Servers::iterator server = servers.begin();
 		 server != servers.end(); ++server)
 	{
@@ -33,9 +32,9 @@ void Network::initServersSockets(Servers &servers)
 		addPollFd(server);
 	}
 
+	addServerFDListenCollection(servers);
 	while (1)
 	{
-		addServerFDListenCollection(servers);
 		pollMultiplexing(servers);
 		handleNewConnections();
 		handleActions();
@@ -241,6 +240,7 @@ void Network::initPollFdClient(Socket &socket, Server& server)
 
 void Network::handleActions(void)   
 {
+	std::string test;
 	char hello[] = "HTTP/1.0 200 OK\r\n"
 				"Server: webserver-c\r\n"
 				"Content-type: text/html\r\n\r\n"
@@ -265,17 +265,21 @@ void Network::handleActions(void)
 			{
 				// Client disconnected
 				// std::cout << "Client disconnected" << std::endl;
-				pollFds[j].events = POLLOUT;
-				clientCollection[j - serverCollection.size()].myStage = RESPONSE;
+				if (clientCollection[j - serverCollection.size()].myStage == RESPONSE)
+					pollFds[j].events = POLLOUT;
+				// pollFds[j].events = POLLOUT;
+				// clientCollection[j - serverCollection.size()].myStage = RESPONSE;
 			}
 			else
 			{
 				// Process the received data
 				std::string receivedData(buffer, bytesRead);
 				clientCollection[j - serverCollection.size()].myBuffer += receivedData;
-				clientCollection[j - serverCollection.size()].processRequest();
+			    // std::cout << "\nSize in handle actions : " << serverCollection.size() << std::endl;
+				clientCollection[j - serverCollection.size()].processRequest(serverCollection);
 				// std::cout << "Received: " << receivedData << 	std::endl;
-				pollFds[j].events = POLLOUT;
+				if (clientCollection[j - serverCollection.size()].myStage == RESPONSE)
+					pollFds[j].events = POLLOUT;
 			}
 		}
 		if (pollFds[j].revents & POLLOUT)

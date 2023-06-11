@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Network.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:12:12 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/11 10:11:45 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/11 17:18:50 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 #include <poll.h>
 #include <vector>
 
-#define	MAX_BUFFER	1024
+#define	MAX_BUFFER	20000
 
 
 class	request;
@@ -46,7 +46,7 @@ static std::vector<struct pollfd>				pollFds;
 class Network
 {
 	public:
-		static void initServersSockets(Servers &servers);
+		static void initServersSockets(Servers& servers);
 		static void clearServersSockets(Servers &servers);
 		static std::string getSocketServerName(const Socket sock);
 		static std::string getSocketClientName(const Socket sock);

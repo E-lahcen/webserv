@@ -6,11 +6,11 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:53 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/06 23:31:13 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/11 16:34:29 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <request.hpp>
+#include <request.hpp> 
 
 request::request()
 {
@@ -140,12 +140,13 @@ void request::CheckIfMethodAllowed(std::vector<Server>::iterator its)
 
 // start request
 
-void request::GetRequest(Config &config)
+void request::GetRequest( Servers& servers )
 {
     Getheader();
     CheckErrors();
-    std::vector<Server>::iterator it = config.configServers.begin();
-    for (; it != config.configServers.end(); it++)
+    std::vector<Server>::iterator it = servers.begin();
+    std::cout << "\n\n server size in getRequest : " << servers.size() << std::endl;
+    for (; it != servers.end(); it++)
     {
         if (it->hostname == this->Rhostname && it->port == this->Rport && this->StatutCode == 0)
         {

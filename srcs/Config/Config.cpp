@@ -5,6 +5,7 @@
 Config::Config(const char *filePath)
 {
     load(filePath);
+    std::cout << "In config size : " << configServers.size() << std::endl;
     Network::initServersSockets(configServers);
 }
 

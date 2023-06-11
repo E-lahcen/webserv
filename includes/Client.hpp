@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 16:23:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/11 13:28:14 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/11 17:37:13 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 #include <Network.hpp>
 #include <request.hpp>
+
+typedef std::vector<Server> Servers;
+
 
 enum Level {
     REQUEST,
@@ -28,9 +31,10 @@ class   Client
     public:
         Client();  
         ~Client();
-        void    processRequest();
+        void    processRequest( Servers& servers );
         
         request*     myRequest;
+        // response*     myReponse;
         Socket      mySocket;
         Server      myServer;
         Level       myStage;

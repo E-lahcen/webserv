@@ -3,16 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:13 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/11 13:27:53 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/11 16:30:58 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <Config.hpp>
+#include <Network.hpp>
+
+typedef std::vector<Server> Servers;
 
 class Config;
 
@@ -61,7 +64,7 @@ class request
 
         //for request resources
         int my_main();
-        void GetRequest(Config  &config);
+        void GetRequest( Servers& servers );
         void GetBody();
         void Getheader();
         void GetChunked();

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 16:25:26 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/11 15:13:30 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/11 17:19:19 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,20 @@ Client::~Client()
 {
 }
 
-void    Client::processRequest()
+void    Client::processRequest( Servers& servers )
 {
     if ((myBuffer.find("\r\n\r\n") != std::string::npos) && myRequest->header.empty())
     {
         myRequest->header = myBuffer.substr(0, myBuffer.find("\r\n\r\n") + 4);
-        myRequest->body = myBuffer.substr(myBuffer.find("\r\n\r\n") + 2);
+        myBuffer = myBuffer.substr(myBuffer.find("\r\n\r\n") + 2);
     }
-    else
-         myRequest->body += myBuffer;
-    if (myRequest->body.find("\r\n0\r\n") != std::string::npos)
+
+    if (myBuffer.find("\r\n0\r\n") != std::string::npos)
     {
-        std::ofstream nn;
-        nn.open("txt.txt");
-        nn << myRequest->body;
+        myRequest->body = myBuffer;
+        myRequest->GetRequest(servers);
         myStage = RESPONSE;
     }
-    std::cout << "-----------Header: " << myRequest->header << 	std::endl;
-    std::cout << "-----------Body: " << myRequest->body << 	std::endl;
+    // std::cout << "-----------Header: " << myRequest->header << 	std::endl;
+    // std::cout << "-----------Body: " << myRequest->body << 	std::endl;
 }
