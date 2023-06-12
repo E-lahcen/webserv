@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Network.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/11 17:48:18 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/12 12:37:16 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,7 @@ addrinfo *Network::getServerAddrInfo(const ServerRef &server, Servers &servers)
 	if (successCode)
 	{
 		clearServersSockets(servers);
-		std::string error = "getServerAddrInfo failed for ";
+		std::string error = "getServerAddrInfo failed";
 		error += server->hostname + ':' + server->port;
 		throwAddrInfoError(successCode, error);
 	}
@@ -275,11 +275,11 @@ void Network::handleActions(void)
 				// Process the received data
 				std::string receivedData(buffer, bytesRead);
 				clientCollection[j - serverCollection.size()].myBuffer += receivedData;
-			    // std::cout << "\nSize in handle actions : " << serverCollection.size() << std::endl;
 				clientCollection[j - serverCollection.size()].processRequest(serverCollection);
-				// std::cout << "Received: " << receivedData << 	std::endl;
 				if (clientCollection[j - serverCollection.size()].myStage == RESPONSE)
+				{
 					pollFds[j].events = POLLOUT;
+				}
 			}
 		}
 		if (pollFds[j].revents & POLLOUT)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 16:25:26 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/11 17:19:19 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/12 12:37:05 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,6 @@ void    Client::processRequest( Servers& servers )
         myRequest->GetRequest(servers);
         myStage = RESPONSE;
     }
-    // std::cout << "-----------Header: " << myRequest->header << 	std::endl;
+    std::cout << "-----------Header: " << myRequest->header << 	std::endl;
     // std::cout << "-----------Body: " << myRequest->body << 	std::endl;
 }

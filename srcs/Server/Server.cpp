@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:04 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/11 17:44:38 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/11 23:08:36 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ size_t Server::getBodySizeMax(void)
 
 void Server::setClientBodySizeMax(std::string &value)
 {
-    if (!is_number(value))
+    if (!is_number(value) || value.size() > 9)
         throw std::runtime_error("Invalid Client Body Size Max input : " + value);
 
     std::stringstream ss;
