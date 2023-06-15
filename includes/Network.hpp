@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Network.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:12:12 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/11 17:18:50 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/12 13:34:18 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class	request;
 class	Client;
 
 typedef std::vector<Server> Servers;
-typedef Servers::iterator ServerRef;
+typedef Servers::iterator	ServerRef;
 
 static std::vector<	Server> 					serverCollection;
 static std::vector<Client>				 		clientCollection;

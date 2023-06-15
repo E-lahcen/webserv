@@ -3,7 +3,7 @@ server
     
 	server_name=www.exemples.com
 
-	listen=10.11.2.11:8081
+	listen=10.11.3.12:8081
 
 	client_body_size_max=184467440
 
@@ -16,7 +16,7 @@ server
 
 		# redirect=303 /redirect.html
 
-		root=/Users/ydahni/Desktop/webserv/root
+		root={PATH}/root
 		
 		autoindex=on
 
@@ -53,7 +53,7 @@ server
     
 	server_name=www.exemples.com
 
-	listen=10.11.2.11:8082
+	listen=localhost:8080
 
 	client_body_size_max=184467440
 
@@ -66,7 +66,7 @@ server
 
 		# redirect=303 /redirect.html
 
-		root=/Users/ydahni/Desktop/webserv/root
+		root={PATHS}/root
 		
 		autoindex=on
 

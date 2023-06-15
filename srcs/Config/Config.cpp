@@ -148,7 +148,7 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
                 else if (key == "redirect")
                     location.redirection = parseRedirection(value);
                 else if (key == "root")
-                    location.root = value;
+                    location.root = getRealPath(value);
                 else if (key == "autoindex")
                     location.autoindex = (value == "on");
                 else if (key == "default")
@@ -174,6 +174,7 @@ std::pair<StatusNbr, Path> Config::parseRedirection(const std::string &line)
     short stat;
     iss >> stat;
     std::getline(iss, value);
+    value = trim_spaces(value);
     if (!stat || value.empty())
         throw std::runtime_error("Invalid Redirection");
     return (std::pair<StatusNbr, Path>(stat, value));

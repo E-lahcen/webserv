@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/12 12:37:16 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/12 14:58:21 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,18 +58,10 @@ void Network::handleNewConnections()
 {
 	for (size_t i = 0; i < serverCollection.size(); i++)
 	{
-		// request	req;
-		// Client	client;
-		// int valread;
-		// char buffer[MAX_BUFFER];
-		
 		if (pollFds[i].revents & POLLIN)
 		{
 			Socket newSock = getNewConnectionSock(pollFds[i].fd);
 			initPollFdClient(newSock, serverCollection[i]);
-			// requestCollection.push_back(std::make_pair(newSock, req));
-			// valread = read(newSock, buffer, 300000);
-			// std::cout << buffer << std::endl;
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 11:55:05 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/06 11:02:58 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/15 11:53:36 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,27 @@ bool is_number(const std::string &s)
         if (!std::isdigit(*it))
             return false;
     return true;
+}
+
+std::string    getlocalPath( )
+{
+    const int bufferSize = 4096; // Maximum path length
+    char buffer[bufferSize];
+    
+    if (getcwd(buffer, bufferSize) != NULL)
+        return buffer;
+    return "";
+}
+
+std::string getRealPath(const std::string& input ) 
+{
+    std::string result = input;
+    std::string  localPath = getlocalPath();
+    size_t pos = 0;
+    
+    while ((pos = result.find("{PATH}", pos)) != std::string::npos) {
+        result.replace(pos, 6, localPath);
+        pos += localPath.length();
+    }
+    return result;
 }
