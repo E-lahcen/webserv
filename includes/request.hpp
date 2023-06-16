@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nrahali <nrahali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:13 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/11 16:30:58 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/15 01:31:15 by nrahali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,15 @@
 #include <Config.hpp>
 #include <Network.hpp>
 
-typedef std::vector<Server> Servers;
 
+typedef std::vector<Server> Servers;
 class Config;
 
 //check if directory
 #include <sys/stat.h>
+
+//Struct for Scan Folder
+#include <dirent.h>
 
 //for request 
 #include <iostream>
@@ -32,15 +35,17 @@ class Config;
 #include <cstring>
 #include <unistd.h>
 
+typedef std::unordered_map<Path, Server::Location>::iterator iterator_location;
+typedef std::vector<Server>::iterator iterator_server;
 class request
 {
     private:
         //header
-        std::map<std::string, std::string> map;
         std::string method;
         std::string uri;
         std::string version;
         //body
+        int file;
         std::vector<std::pair<std::string, std::string> > Multipart;
         //
         size_t BodySizeMax;
@@ -48,9 +53,15 @@ class request
 	    std::string Rport;
     
         //for respons
-        std::string path;
         int StatutCode;
     public:
+        std::map<std::string, std::string> map;
+        //for check response
+        bool cgi;
+        bool listDirectory;
+        std::string path;
+
+        int finishRead;
         std::string header;
         std::string body;
         //for method Get
@@ -62,25 +73,47 @@ class request
         void SetStatutCode(int statut);
         int GetStatutCode() const;
 
+        void Check_methods(iterator_location &itl, iterator_server &its);
+
         //for request resources
         int my_main();
         void GetRequest( Servers& servers );
-        void GetBody();
+        void GetBody(std::string &body);
         void Getheader();
-        void GetChunked();
-        void GetMultipart();
+
+        //Content-Length
+        void GetContentLength(std::string &body);
+        size_t ContentLength;
+
+        //chunked
+        void GetChunked(std::string &body);
+
+        //multipart
+        int multipart;
+        void GetMultipart(std::string &body);
 
         //
         int CheckLocation(std::string location, std::string root);
-        void CheckIfMethodAllowed(std::vector<Server>::iterator it);
-        void Post(std::unordered_map<Path, Server::Location>::iterator &itl);
-        void upload(std::unordered_map<Path, Server::Location>::iterator &itl);
+        void CheckIfMethodAllowed(iterator_server &its);
+        //Post
+        void Post(iterator_location &itl, iterator_server &its);
+        void upload(iterator_location &itl,iterator_server &its);
         void CreatFileInDirectoryOfUpload(std::string &path);
+        void IsDirectoryPost(iterator_location &itl, iterator_server &its);
+        void IsFile(iterator_location &itl, iterator_server &its);
+
+        //Get
+        void Get(iterator_location &itl, iterator_server &its);
+        void IsDirectoryGet(iterator_location &itl, iterator_server &its);
+        void ListDirectory();
 
         //for error
-        void CheckErrors();
+        void CheckErrorsHeader(iterator_location &itl, iterator_server &its);
 
-
+        //check errors page
+        void CheckErrorsPage(int status_code, iterator_location &itl, iterator_server &its);
+        void handleMethodLocation(iterator_location &itl, iterator_server &its);
+        
         //for class
         request();
         ~request();
@@ -89,5 +122,6 @@ class request
 
 std::string GetExtension(std::string type);
 std::string JoinePathToRoot(std::string root, std::string add);
-int         CheckHexa(std::string s);
+int CheckHexa(std::string s);
 std::string GetRandomName();
+std::string ScanFolderForIndex(std::string &path);

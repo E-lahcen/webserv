@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Network.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/12 14:58:21 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/14 22:31:50 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,17 +58,27 @@ void Network::handleNewConnections()
 {
 	for (size_t i = 0; i < serverCollection.size(); i++)
 	{
+		// request	req;
+		// Client	client;
+		// int valread;
+		// char buffer[MAX_BUFFER];
+		
 		if (pollFds[i].revents & POLLIN)
 		{
 			Socket newSock = getNewConnectionSock(pollFds[i].fd);
 			initPollFdClient(newSock, serverCollection[i]);
+			// requestCollection.push_back(std::make_pair(newSock, req));
+			// valread = read(newSock, buffer, 300000);
+			// std::cout << buffer << std::endl;
 		}
 	}
 }
 
 Socket Network::getNewConnectionSock(Socket listenSock)
 {
+	// int tmp = 1;
 	Socket newSock = accept(listenSock, NULL, NULL);
+	// setsockopt(newSock, SOL_SOCKET, SO_NOSIGPIPE, &tmp, sizeof(tmp));
 	if (newSock == -1)
 		throwErrnoException("getNewConnectionSock() failed to accept new connection");
 
@@ -160,7 +170,7 @@ addrinfo *Network::getServerAddrInfo(const ServerRef &server, Servers &servers)
 	if (successCode)
 	{
 		clearServersSockets(servers);
-		std::string error = "getServerAddrInfo failed";
+		std::string error = "getServerAddrInfo failed for ";
 		error += server->hostname + ':' + server->port;
 		throwAddrInfoError(successCode, error);
 	}
@@ -212,6 +222,7 @@ void Network::pollMultiplexing(Servers &servers)
 		clearServersSockets(servers);
 		throw std::runtime_error("Issue in multiplexing using poll!");
 	}
+	signal(SIGPIPE, SIG_IGN);
 }
 
 void Network::initPollFdClient(Socket &socket, Server& server)
@@ -233,10 +244,6 @@ void Network::initPollFdClient(Socket &socket, Server& server)
 void Network::handleActions(void)   
 {
 	std::string test;
-	char hello[] = "HTTP/1.0 200 OK\r\n"
-				"Server: webserver-c\r\n"
-				"Content-type: text/html\r\n\r\n"
-				"<h1>hello from server</h1>\r\n";
 
 	for (size_t j = serverCollection.size(); j < pollFds.size(); j++)
 	{
@@ -268,18 +275,14 @@ void Network::handleActions(void)
 				std::string receivedData(buffer, bytesRead);
 				clientCollection[j - serverCollection.size()].myBuffer += receivedData;
 				clientCollection[j - serverCollection.size()].processRequest(serverCollection);
-				if (clientCollection[j - serverCollection.size()].myStage == RESPONSE)
-				{
+ 				if (clientCollection[j - serverCollection.size()].myStage == RESPONSE)
 					pollFds[j].events = POLLOUT;
-				}
 			}
 		}
 		if (pollFds[j].revents & POLLOUT)
 		{
-			ssize_t bytesWritten = write(pollFds[j].fd, hello, strlen(hello));
-			if (bytesWritten == -1)
-				throw std::runtime_error("Error writing to client");
-			else if ((size_t)bytesWritten == strlen(hello))
+			clientCollection[j - serverCollection.size()].processResponse();
+			if (clientCollection[j - serverCollection.size()].CloseSocket == true)
 			{
 				// printf("------------------Hello message sent-------------------\n");
 				close(pollFds[j].fd);

@@ -6,18 +6,28 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:04 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/11 23:08:36 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/16 17:30:56 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Server.hpp>
 
-Server::Server() {}
+Server::Server()
+{
+    const std::string	requiredKeys[] = {"server", "listen", "client_body_size_max", "location"};
+    std::list<std::string>	copyRequiredKeysList(requiredKeys, requiredKeys + sizeof(requiredKeys) / sizeof(requiredKeys[0]));
+    requiredKeysList = copyRequiredKeysList;
+}
 
 Server::~Server() {}
 
 // Location constructor initialisation
-Server::Location::Location() : get(false), post(false), del(false), autoindex(false) {}
+Server::Location::Location() : get(false), post(false), del(false), autoindex(false) 
+{
+    const std::string	requiredKeys[] = {"allow_methods", "root"};
+    std::list<std::string>	copyRequiredLocationKeysList(requiredKeys, requiredKeys + sizeof(requiredKeys) / sizeof(requiredKeys[0]));
+    requiredLocationKeysList = copyRequiredLocationKeysList;
+}
 
 void Server::setSettings(std::string &key, std::string &value)
 {
@@ -55,6 +65,11 @@ void Server::setClientBodySizeMax(std::string &value)
 
     ss << value;
     ss >> clientBodySizeMax;
+    if (clientBodySizeMax > 100000000)
+    {
+        ss.clear();
+        throw std::runtime_error("Invalid Client Body Size Max input : " + value);
+    }
     ss.clear();
 }
 

@@ -1,13 +1,76 @@
 server
 {
     
-	server_name=www.exemples.com
+	server_name=www.exemple.com
 
-	listen=10.11.3.12:8081
+	listen=127.0.0.1:8083
 
-	client_body_size_max=184467440
+	client_body_size_max=100000000
 
+	#error_page=404 /error_page.html
+	error_page=400 /error_page/400.html
+	error_page=403 /error_page/403.html
+	error_page=404 /error_page/404.html
+	error_page=405 /error_page/405.html
+	error_page=409 /error_page/409.html
+	error_page=413 /error_page/413.html
+	error_page=414 /error_page/414.html
+	error_page=500 /error_page/500.html
+	error_page=501 /error_page/501.html
+	error_page=505 /error_page/505.html
+
+	location / 
+    {
+
+		allow_methods=GET	POST
+
+		# redirect=301 /a/index.html
+		#delete space in red
+		#" /index.html"
+	
+		root={PATH}/root
+		
+		autoindex=on
+
+		default=/Project.html
+
+		cgi=.py /bin/python3
+
+		upload=/upload
+
+	}
+
+	location /a 
+    {
+
+		allow_methods=GET POST DELETE
+
+		# redirect=301 index.html
+
+		root={PATH}/root
+		
+		autoindex=on
+
+		default=/index.html
+
+		cgi=.py /bin/python3
+
+		upload=/goinfre
+
+	}
+
+}
+
+server
+{
+	server_name=test2
+
+	listen=127.0.0.1:8084
+
+	client_body_size_max=99999999
 	error_page=404 /error_page.html
+	error_page=405 /maerror_page.html
+
 
 	location / 
     {
@@ -35,66 +98,16 @@ server
 
 		redirect=301 /redirect.html
 
-		root=/path/to/dir
+		root={PATH}/root
 		
 		autoindex=on
 
 		default=/default.html
 
-		cgi=.py /bin/python3
+		cgi=.php /bin/php
 
 		upload=/goinfre
 
 	}
-
 }
-server
-{
-    
-	server_name=www.exemples.com
 
-	listen=localhost:8080
-
-	client_body_size_max=184467440
-
-	error_page=404 /error_page.html
-
-	location / 
-    {
-
-		allow_methods=GET	POST
-
-		# redirect=303 /redirect.html
-
-		root={PATHS}/root
-		
-		autoindex=on
-
-		default=/default.html
-
-		cgi=.py /bin/python3
-
-		upload=/upload
-
-	}
-
-	location /a 
-    {
-
-		allow_methods=GET POST DELETE
-
-		redirect=301 /redirect.html
-
-		root=/path/to/dir
-		
-		autoindex=on
-
-		default=/default.html
-
-		cgi=.py /bin/python3
-
-		upload=/goinfre
-
-	}
-
-}

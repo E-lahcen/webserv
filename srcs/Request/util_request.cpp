@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 21:50:49 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/06 22:02:53 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/15 00:38:58 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,27 +40,25 @@ int CheckHexa(std::string s)
 
 std::string GetRandomName()
 {
-    std::string alpha = "abcdefghijklmnopqrstuvwxyz";
+    std::string alpha = "aefgklmno6pz1594ruthstuvw8xyuvwbcdjklqrsdsfwxyrstuvwxyz";
     std::vector<std::string> name1;
     std::vector<std::string> name2;
     std::string c;
 
+    int x = 0;
     for (int i = 0; i < 26; i++)
     {
-        c = alpha[i];
+        x = std::rand() % alpha.size();
+        c = alpha[x];
         name1.push_back(c);
-    }
-
-    for (int i = 26 ; i > 0; i--)
-    {
-        c = alpha[i];
+        x = std::rand() % alpha.size();
+        c = alpha[x];
         name2.push_back(c);
     }
     
-    std::srand(std::time(0));
     int i = std::rand() % name1.size();
-    sleep(1);
-    std::srand(std::time(0));
+    usleep(10);
+    // std::srand(std::time(0));
     int j = std::rand() % name2.size();
 
     std::string name = name1[i] + name2[j];
@@ -93,28 +91,42 @@ int CheckUri(std::string uri)
     return (1);
 }
 
+
+void request::Check_methods(iterator_location &itl, iterator_server &its)
+{
+    if (this->method == "PUT" || this->method == "PATCH" || this->method == "HEAD" || this->method == "OPTIONS")
+        CheckErrorsPage(501, itl, its);
+    else if (this->method == "GET" || this->method == "POST" || this->method == "DELETE")
+        SetStatutCode(0);
+    else
+        CheckErrorsPage(400, itl, its);
+}
+
+
 //check if header is all good and set statut code
 
-void request::CheckErrors()
+void request::CheckErrorsHeader(iterator_location &itl, iterator_server &its)
 {
     SetStatutCode(0);
-
+    Check_methods(itl, its);
+    if(this->version != "HTTP/1.1")
+        CheckErrorsPage(505, itl, its);
     if(this->map.find("Transfer-Encoding") != this->map.end() && this->StatutCode == 0)
     {
         std::string name;
         name = this->map["Transfer-Encoding"];
         if (name != "chunked")
-            SetStatutCode(501);
+            CheckErrorsPage(501, itl, its);
     }
     if (this->method == "POST" && this->StatutCode == 0)
     {
         if (this->map.find("Transfer-Encoding") == this->map.end() && this->map.find("Content-Length") == this->map.end())
-            SetStatutCode(400);
+            CheckErrorsPage(400, itl, its);
     }
     if (CheckUri(this->uri) == 0 && this->StatutCode == 0)
-        SetStatutCode(400);
+        CheckErrorsPage(400, itl, its);
     if (this->uri.length() > 2048 && this->StatutCode == 0)
-        SetStatutCode(414);
+        CheckErrorsPage(414, itl, its);
 }
 
 //join to root
@@ -159,6 +171,8 @@ std::string GetExtension(std::string type)
         return ("");
     if (type == "multipart/form-data")
         return ("");
+    if (type == "image/jpg")
+        return (".jpg");
     if (type == "image/jpeg")
         return (".jpeg");
     if (type == "image/png")
@@ -172,4 +186,38 @@ std::string GetExtension(std::string type)
     if (type == "application/pdf")
         return (".pdf");
     return ("");
+}
+
+
+//Scan Folder For index file
+std::string ScanFolderForIndex(std::string &path)
+{
+    DIR* d = opendir(path.c_str());
+    struct dirent* type;
+    while ((type = readdir(d)) != NULL)
+    {
+        if (type->d_type == DT_REG)
+        {
+            std::string fileName(type->d_name);
+            if (fileName.find("index") != std::string::npos)
+            {
+                closedir(d);
+                return (fileName);
+            }
+        }
+    }
+    closedir(d);
+    return ("NotFound");
+}
+
+
+void request::CheckErrorsPage(int status_code, iterator_location &itl, iterator_server &its)
+{
+    SetStatutCode(status_code);
+    this->finishRead = 0;
+    if (its->errorPage.find(status_code) != its->errorPage.end())
+        this->path = JoinePathToRoot(itl->second.root , its->errorPage[status_code]);
+    else
+        this->path.clear();
+    std::cout << status_code << " " << this->path << std::endl;
 }

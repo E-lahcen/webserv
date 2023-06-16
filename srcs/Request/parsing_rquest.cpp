@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 21:53:31 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/11 16:33:17 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/13 21:54:02 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void request::Getheader()
     std::string line = this->header.substr(0, this->header.find("\r\n"));
     std::string line2 = this->header.substr(line.length() + 2);
 
-    this->header.clear();
     n << line;
     while (std::getline(n, line, ' '))
     {
@@ -71,53 +70,57 @@ void request::Getheader()
 
 //parsing request chunked
 
-void request::GetChunked()
+void request::GetChunked(std::string &body)
 {
-    std::stringstream b;
-    std::ofstream nn;
-    std::string line;
-    size_t p = 0;
-
-    b << this->body;
-
-    nn.open("image.png");
-    while (std::getline(b,line, '\r'))
+    std::stringstream n;
+    std::string hexa;
+    n << body;
+    if (this->file != -1)
     {
-        if (line[0] == '\n')
+        getline(n, hexa, '\r');
+        getline(n, hexa, '\r');
+        if (hexa[0] == '\n')
         {
-            if (CheckHexa(line) == 1)
+            if (CheckHexa(hexa) == 1)
             {
-                p = this->body.find(line);
-                long decimal = strtol(line.substr(1).c_str(), NULL, 16);
-                if (decimal == 0)
-                    break;
-                this->body.erase(p - 1,line.length() + 3);
+                size_t decimal = strtol(hexa.c_str(), NULL, 16);
+                if (body.find("\r\n0\r\n") != std::string::npos)
+                    this->finishRead = 0;
+                if (body.size() >= decimal)
+                {
+                    size_t p = body.find(hexa);
+                    body.erase(p - 1,hexa.length() + 3);
+                    write(this->file, body.substr(0, decimal).c_str(), decimal);
+                    body.erase(0, decimal);
+                }
+                if (body.find("\r\n0\r\n") != std::string::npos)
+                {
+                    body.erase(body.find("\r\n0\r\n"));
+                    write(this->file, body.c_str(), body.size());
+                    body.clear();
+                }
             }
         }
     }
-    p = this->body.find("\r\n0\r\n");
-    this->body.erase(p);
-    nn << this->body;
-    if ((this->body.length()) > this->BodySizeMax)
-        SetStatutCode(413);
 }
 
 //for get name of file from  multipart request
 
-std::string GetNameMultipart(std::string header, std::string number)
+std::string GetNameMultipart(std::string header, std::string number, std::string path)
 {
     number += "--";
     if (header.find(number) == std::string::npos)
     {
-        std::string name;
+        path += '/';
+        std::string name = path;
         if (header.find("filename") != std::string::npos)
         {
             size_t start = header.find("filename") + 10;
             size_t end = header.find("\"", start);
-            name = header.substr(start,  end - start);
+            name += header.substr(start,  end - start);
         }
         else
-            name = GetRandomName();
+            name += GetRandomName();
         return (name);
     }
     header.clear();
@@ -126,36 +129,34 @@ std::string GetNameMultipart(std::string header, std::string number)
 
 // for parsing multipart request
 
-void request::GetMultipart()
+void request::GetMultipart(std::string &body)
 {
     std::string line;
     std::string name;
     std::string number;
-    std::string body;
+    std::string string;
 
 
-    size_t p =  this->body.find("\r\n");
-    number = this->body.substr(p + 2, this->body.find("\r\n", p + 2) - 2);
-
+    size_t p =  body.find("\r\n");
+    number = body.substr(p + 2, body.find("\r\n", p + 2) - 2);
     size_t i = 0;
     size_t start = 0;
     size_t end = 0;
 
     p = 0;
-    while ((p = this->body.find(number, i)) != std::string::npos)
+    while ((p = body.find(number, i)) != std::string::npos)
     {
-        name = this->body.substr(p, this->body.find("\r\n\r\n",p) - p);
+        name = body.substr(p, body.find("\r\n\r\n",p) - p);
         if (name.empty())
             break;
-        name = GetNameMultipart(name, number);
-        start = this->body.find("\r\n\r\n", p) + 4;
-        end = this->body.find(number, start);
-        body = this->body.substr(start, end - (start + 2));
-        this->Multipart.push_back(std::make_pair(name, body));
+        name = GetNameMultipart(name, number, this->path);
+        start = body.find("\r\n\r\n", p) + 4;
+        end = body.find(number, start);
+        string = body.substr(start, end - (start + 2));
+        this->Multipart.push_back(std::make_pair(name, string));
         i = p + number.length() + 3;
     }
-    std::vector<std::pair<std::string, std::string> >::iterator it = this->Multipart.begin();
-    
+    std::vector<std::pair<std::string, std::string> >::iterator it = this->Multipart.begin();    
     std::ofstream n;
     for (; it != Multipart.end(); it++)
     {

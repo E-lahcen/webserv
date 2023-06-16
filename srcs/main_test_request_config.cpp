@@ -6,13 +6,11 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:32 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/11 15:12:24 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/16 14:44:38 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <request.hpp>
 #include <Config.hpp>
-#include <Client.hpp>
 
 #include <stdio.h>
 #include <sys/socket.h>
@@ -230,9 +228,9 @@ int request::my_main()
 
 int main(int ac, char **av)
 {
-    (void)av;
     try
     {
+        std::srand(std::time(0));
         (void)ac;
         // (void)av;
         // request a;
@@ -248,6 +246,6 @@ int main(int ac, char **av)
     catch (const std::exception &e)
     {
         std::cerr << "Error loading configuration: " << e.what() << std::endl;
-        return 1;
     }
+    // system("leaks webserv");
 }

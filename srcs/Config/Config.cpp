@@ -2,9 +2,13 @@
 #include <Network.hpp>
 #include <string>
 
+
 Config::Config(const char *filePath)
 {
     load(filePath);
+    createDefaultServer();
+    std::cout << "Local Ip adress for Default Server : " << configServers.back().hostname << std::endl;
+    std::cout << "Connected Servers : " << configServers.size() << std::endl;
     Network::initServersSockets(configServers);
 }
 
@@ -12,6 +16,7 @@ Config::~Config() {}
 
 void Config::load(const char *path)
 {
+
     if (!path)
         throw std::runtime_error("Include a config file!");
     std::string filePath = path;
@@ -21,29 +26,37 @@ void Config::load(const char *path)
         throw std::runtime_error("Failed to open configuration file: " + filePath);
 
     std::string line;
+    bool    validServerCheck = false;
     while (std::getline(file, line))
     {
         line = trim_spaces(line);
-        if (setSyntax(line))
+        if (setSyntax(line, validServerCheck))
             continue; // Skip empty lines, comments, and block delimiters
         size_t delimiterPos = line.find('=');
-        if (delimiterPos != std::string::npos)
+        if (delimiterPos != std::string::npos && validServerCheck)
         {
             std::string key = trim_spaces(line.substr(0, delimiterPos));
             std::string value = trim_spaces(line.substr(delimiterPos + 1));
 
-            if (isValidKey(key))
+            if (value.empty())
+                throw std::runtime_error("Invalid value in configuration for the key : " + key);
+            else if (isValidKey(key))
+            {
+                configServers.back().requiredKeysList.remove(key);
                 configServers.back().setSettings(key, value);
+            }
             else
                 throw std::runtime_error("Invalid key in configuration: " + key);
         }
-        else if (line.substr(0, 8) == "location")
+        else if (line.substr(0, 8) == "location" && validServerCheck)
+        {
+            configServers.back().requiredKeysList.remove("location");
             configServers.back().setServerLocations(parseLocation(file, line));
+        }
         else
-            throw std::runtime_error("Invalid \"Key=value syntax\" in configuration! " + line);
+            throw std::runtime_error("Invalid syntax in configuration!");
     }
-    if (!isValidBrackets())
-        throw std::runtime_error("Invalid Brackets Syntax!");
+    checkControl();
 }
 
 bool Config::isValidBrackets() const
@@ -51,24 +64,27 @@ bool Config::isValidBrackets() const
     return (Brackets[0] == Brackets[1]);
 }
 
-bool Config::setSyntax(std::string &line)
+bool Config::setSyntax(std::string &line, bool  &resetServerCheck)
 {
     if (line == "server")
     {
         Server server;
+        resetServerCheck = true;
+        server.requiredKeysList.remove(line);
         configServers.push_back(server);
         return true;
     }
     else if (line.empty() || line[0] == '#')
         return true;
-    else if (line == "{")
+    else if (line == "{" && resetServerCheck)
     {
         Brackets[0] += 1;
         return true;
     }
-    else if (line == "}")
+    else if (line == "}" && resetServerCheck)
     {
         Brackets[1] += 1;
+        resetServerCheck = false;
         return true;
     }
     return false;
@@ -126,12 +142,15 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
     std::getline(iss, locationPath);
 
     locationPath = trim_spaces(locationPath);
+    if (locationPath.empty())
+        throw std::runtime_error("Location Path is empty!");
 
     std::string line;
+    bool    validServerCheck = true;
     while (std::getline(ifile, line))
     {
         line = trim_spaces(line);
-        if (setSyntax(line) && line != "}")
+        if (setSyntax(line, validServerCheck) && line != "}")
             continue; // Skip empty lines, comments, and block delimiters
 
         size_t delimiterPos = line.find('=');
@@ -157,6 +176,7 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
                     location.uploadRoute = value;
                 else if (key == "cgi")
                     location.cgi.insert(parseCgi(value));
+                location.requiredLocationKeysList.remove(key);
             }
             else
                 throw std::runtime_error("Invalid key in location block: " + key);
@@ -164,6 +184,9 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
         else if (line == "}")
             break;
     }
+    if (!location.requiredLocationKeysList.empty())
+        throw std::runtime_error("Non complete location settings, complete all keys needed!\nRequired location settings : allow_methods, root");
+
     return (std::pair<Path, Server::Location>(locationPath, location));
 }
 
@@ -206,4 +229,66 @@ std::pair<Extension, Path> Config::parseCgi(const std::string &value)
     if (path[0] != '/')
         throw std::runtime_error("Invalid CGI path!");
     return std::pair<Extension, Path>(extension, path);
+}
+
+void	Config::createDefaultServer()
+{
+    Server      serv;
+    Server::Location    loc;
+
+    serv.serverName = "Default Server";
+    serv.hostname = getLocalIpAddress();
+    serv.port = "8080";
+    serv.errorPage.insert(std::make_pair(400, "/error_page/400.html"));
+    serv.errorPage.insert(std::make_pair(403, "/error_page/403.html"));
+    serv.errorPage.insert(std::make_pair(404, "/error_page/404.html"));
+    serv.errorPage.insert(std::make_pair(405, "/error_page/405.html"));
+    serv.errorPage.insert(std::make_pair(409, "/error_page/409.html"));
+    serv.errorPage.insert(std::make_pair(413, "/error_page/413.html"));
+    serv.errorPage.insert(std::make_pair(414, "/error_page/414.html"));
+    serv.errorPage.insert(std::make_pair(500, "/error_page/500.html"));
+    serv.errorPage.insert(std::make_pair(501, "/error_page/501.html"));
+    serv.errorPage.insert(std::make_pair(505, "/error_page/505.html"));
+
+    // Init Location for Default Server
+    loc.route = "/";
+    loc.get = true;
+    loc.root = getlocalPath() + "/root";
+    loc.defaultFile = "/index.html";
+
+    serv.setServerLocations(std::make_pair("/", loc));
+
+    configServers.push_back(serv);
+}
+
+bool    Config::checkRequiredKeys()
+{
+    for(std::vector<Server>::iterator it = configServers.begin(); it != configServers.end(); it++)
+    {
+        if (!it->requiredKeysList.empty())
+            return false;
+    }
+    return true;
+}
+
+void    Config::checkControl()
+{
+    size_t  cnt;
+
+    if (!checkRequiredKeys())
+        throw std::runtime_error("Non complete settings, complete all keys needed!\nRequired settings : server, listen, client_body_size_max, location.");
+    if (!configServers.size())
+        throw std::runtime_error("Error in config file : Create at least one server!");
+    if (!isValidBrackets())
+        throw std::runtime_error("Invalid Brackets Syntax!");
+    cnt = configServers.size();
+
+    for(std::vector<Server>::iterator it = configServers.begin(); it != configServers.end(); it++)
+    {
+        cnt += it->getServerLocations().size();
+        if (it->getServerLocations().find("/") == it->getServerLocations().end())
+            throw std::runtime_error("Invalid location set, you need to add a / location!");
+    }
+    if (Brackets[0] != cnt) //Check if the number of the brackets pair equal to servers+location
+        throw std::runtime_error("Invalid Syntax!");
 }

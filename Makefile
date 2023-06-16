@@ -15,6 +15,7 @@ SERVERDIR	:=	Server
 UTILSDIR	:=	Utils
 REQUESTDIR	:=	Request
 CLIENTDIR	:=	Client
+RESPONSEDIR :=	Response
 
 # sources
 
@@ -32,14 +33,21 @@ CPPREQUEST	:=	request.cpp \
 				geters.cpp  \
 				parsing_rquest.cpp \
 				util_request.cpp \
-				upload.cpp
+				Post.cpp \
+				Get.cpp
+
+CPPRESPONSE  := Response_msg.cpp \
+				Response.cpp \
+				Response_Errors.cpp \
+				Utils_respnonse.cpp 
 
 CFILES		:=	main_test_request_config.cpp \
 				$(foreach F,$(CPPCONFIG),$(CONFIGDIR)/$(F)) \
 				$(foreach F,$(CPPSERVER),$(SERVERDIR)/$(F)) \
 				$(foreach F,$(CPPUTILS),$(UTILSDIR)/$(F)) \
 				$(foreach F,$(CPPCLIENT),$(CLIENTDIR)/$(F)) \
-				$(foreach F,$(CPPREQUEST),$(REQUESTDIR)/$(F))
+				$(foreach F,$(CPPREQUEST),$(REQUESTDIR)/$(F)) \
+				$(foreach F,$(CPPRESPONSE),$(RESPONSEDIR)/$(F))
 
 SRCS		:= $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
 

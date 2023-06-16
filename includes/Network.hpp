@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Network.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:12:12 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/12 13:34:18 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/13 04:05:42 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,14 @@
 #include <poll.h>
 #include <vector>
 
-#define	MAX_BUFFER	20000
+#define	MAX_BUFFER	30000
 
 
 class	request;
 class	Client;
 
 typedef std::vector<Server> Servers;
-typedef Servers::iterator	ServerRef;
+typedef Servers::iterator ServerRef;
 
 static std::vector<	Server> 					serverCollection;
 static std::vector<Client>				 		clientCollection;

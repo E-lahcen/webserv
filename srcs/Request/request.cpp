@@ -6,42 +6,86 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:53 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/11 16:34:29 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/15 00:08:04 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <request.hpp> 
+#include <request.hpp>
 
 request::request()
 {
+    this->file = -1;
+    this->multipart = -1;
+    this->ContentLength = 0;
+    this->finishRead = -1;
+    this->cgi = false;
+    this->listDirectory = false;
+    this->StatutCode = 0;
+    
 }
 
 request::~request()
 {
 }
+//Content-Length
 
+void request::GetContentLength(std::string &body)
+{
+    std::stringstream number;
+    number << map["Content-Length"].c_str();
+    size_t size = 0;
+    number >> size;
+    if (this->file != -1)
+    {
+        if (this->ContentLength == 0)
+        {
+            body = body.substr(this->body.find("\r\n") + 3);
+        }
+        this->ContentLength += body.size();
+        if (this->ContentLength == size)
+        {
+            if(!body.empty())
+            {
+                write(this->file, body.c_str(), body.size());
+                body.clear();
+            }
+            if (this->ContentLength > this->BodySizeMax)
+                SetStatutCode(413);
+            this->finishRead = 0;
+            return;
+        }
+        else
+        {
+            write(this->file, body.c_str(), body.size());
+            body.clear();
+        }
+    }
+}
 // parsing all request
 
-void request::GetBody()
+void request::GetBody(std::string &body)
 {
-    if (this->method == "POST" && this->StatutCode == 0)
+    if (this->method == "POST" )
     {
-        if (map.find("Transfer-Encoding") != map.end() && this->StatutCode == 0)
+        if (map.find("Transfer-Encoding") != map.end())
         {
-            GetChunked();
+            GetChunked(body);
         }
-        if (map.find("Content-Length") != map.end() && this->StatutCode == 0)
+        if (map.find("Content-Length") != map.end())
         {
             std::map<std::string, std::string>::iterator it = map.find("Content-Type");
             if (it->second.find("multipart/form-data") != std::string::npos)
             {
-                GetMultipart();
+                std::stringstream number;
+                number << map["Content-Length"].c_str();
+                size_t size = 0;
+                number >> size;
+                if (body.size() == (size + 2))
+                    this->multipart = 1;
             }
             else
             {
-                this->body = body.substr(this->body.find("\r\n") + 2, atoi(map["Content-Length"].c_str()));
-                if (this->body.length() > this->BodySizeMax)
-                    SetStatutCode(413);
+                GetContentLength(body);
             }
         }
     }
@@ -76,8 +120,37 @@ int request::CheckLocation(std::string location, std::string root)
 }
 
 
+void request::handleMethodLocation(std::unordered_map<Path, Server::Location>::iterator &itl, std::vector<Server>::iterator &its)
+{
+    if (this->method == "POST" && this->StatutCode == 0)
+    {
+        if (itl->second.post == 1)
+        {
+            Post(itl, its);
+        }
+        else
+            CheckErrorsPage(405, itl, its);
+    }
+    if (this->method == "GET" && this->StatutCode == 0)
+    {
+        if (itl->second.get == 1)
+        {
+            Get(itl, its);
+        }
+        else
+            CheckErrorsPage(405, itl, its);
+    }
+    if (this->method == "DELETE" && this->StatutCode == 0)
+    {
+        if (itl->second.del == 0)
+            CheckErrorsPage(405, itl, its);
+    }
+}
+
+
+
 // check method if allowed in this server
-void request::CheckIfMethodAllowed(std::vector<Server>::iterator its)
+void request::CheckIfMethodAllowed(iterator_server &its)
 {
     std::unordered_map<Path, Server::Location> location = its->getServerLocations();
     std::unordered_map<Path, Server::Location>::iterator itl = location.begin();
@@ -88,36 +161,22 @@ void request::CheckIfMethodAllowed(std::vector<Server>::iterator its)
         if (CheckLocation(itl->first, itl->second.root) == 0)
         {
             c++;
+            CheckErrorsHeader(itl, its);
             if (itl->second.redirection.first == 301)
             {
                 this->path = itl->second.redirection.second;
                 std::cout << this->path << std::endl;
+                this->finishRead = 0;
                 SetStatutCode(301);
-                break;
+                break; 
             }
-            if (this->method == "POST" && this->StatutCode == 0)
+            if (itl->first == this->uri)
             {
-                if (itl->second.post == 1)
-                {
-                    Post(itl);
-                }
-                else
-                    SetStatutCode(405);
+                if (!itl->second.defaultFile.empty())
+                    this->path = JoinePathToRoot(itl->second.root, itl->second.defaultFile);
+                std::cout << this->path << std::endl;
             }
-            if (this->method == "GET" && this->StatutCode == 0)
-            {
-                if (itl->second.get == 1)
-                {
-                    std::cout << "hi" << std::endl;
-                }
-                else
-                    SetStatutCode(405);
-            }
-            if (this->method == "DELETE" && this->StatutCode == 0)
-            {
-                if (itl->second.del == 0)
-                    SetStatutCode(405);
-            }
+            handleMethodLocation(itl, its);
             break;
         }
     }
@@ -125,15 +184,21 @@ void request::CheckIfMethodAllowed(std::vector<Server>::iterator its)
     {
         itl = location.find("/");
         this->path = JoinePathToRoot (itl->second.root , this->uri);
-        if (this->method == "POST" && this->StatutCode == 0)
+        CheckErrorsHeader(itl, its);
+        if (itl->second.redirection.first == 301)
         {
-            if (itl->second.post == 1)
-            {
-                Post(itl);
-            }
-            else
-                SetStatutCode(405);
+            this->path = itl->second.redirection.second;
+            std::cout << this->path << std::endl;
+            this->finishRead = 0;
+            SetStatutCode(301);
+            return ;
         }
+        if (itl->first == this->uri)
+        {
+            if (!itl->second.defaultFile.empty())
+                this->path = JoinePathToRoot(itl->second.root, itl->second.defaultFile);
+        }
+        handleMethodLocation(itl, its);
     }
     location.clear();
 }
@@ -143,15 +208,12 @@ void request::CheckIfMethodAllowed(std::vector<Server>::iterator its)
 void request::GetRequest( Servers& servers )
 {
     Getheader();
-    CheckErrors();
     std::vector<Server>::iterator it = servers.begin();
-    std::cout << "\n\n server size in getRequest : " << servers.size() << std::endl;
     for (; it != servers.end(); it++)
     {
         if (it->hostname == this->Rhostname && it->port == this->Rport && this->StatutCode == 0)
         {
             this->BodySizeMax = it->getBodySizeMax();
-            GetBody();
             if (this->StatutCode == 0)
                 CheckIfMethodAllowed(it);
             break;

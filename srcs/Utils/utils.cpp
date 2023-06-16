@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 11:55:05 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/15 11:53:36 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/15 17:11:50 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,31 @@ bool is_number(const std::string &s)
         if (!std::isdigit(*it))
             return false;
     return true;
+}
+
+void check_host_name(int hostname) { //This function returns host name for local computer
+   if (hostname == -1)
+      throw std::runtime_error("Gethostbyname() error during initilizing local IP address");
+
+}
+void check_host_entry(struct hostent * hostentry) { //find host info from host name
+   if (hostentry == NULL){
+      throw std::runtime_error("Gethostbyname() error during initilizing local IP address");
+   }
+}
+
+std::string getLocalIpAddress()
+{
+    char host[256];
+    char *IP;
+    struct hostent *host_entry;
+    int hostname;
+    hostname = gethostname(host, sizeof(host)); //find the host name
+    check_host_name(hostname);
+    host_entry = gethostbyname(host); //find host information
+    check_host_entry(host_entry);
+    IP = inet_ntoa(*((struct in_addr*) host_entry->h_addr_list[0])); //Convert into IP string
+    return IP;
 }
 
 std::string    getlocalPath( )

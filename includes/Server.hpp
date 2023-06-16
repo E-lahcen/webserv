@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:19 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/11 12:15:45 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/16 17:30:49 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,17 @@
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
+#include <list>
+#include <arpa/inet.h>
 
 #define MAX_PORT_NUMBER 65535
 
-const std::string validKeys[] = {"server_name", "listen", "error_page", "client_body_size_max"};
-const std::string validLocationKeys[] = {"allow_methods", "redirect", "root", "autoindex", "default", "cgi", "upload"};
+const std::string	validKeys[] = {"server_name", "listen", "error_page", "client_body_size_max"};
+const std::string	validLocationKeys[] = {"allow_methods", "redirect", "root", "autoindex", "default", "cgi", "upload"};
 
 typedef short StatusNbr;
 typedef std::string Path;
+
 typedef std::string Extension;
 typedef std::unordered_map<Extension, Path> CgiPair;
 typedef std::pair<StatusNbr, Path> redirectionPair;
@@ -40,7 +43,7 @@ public:
 	std::string port;
 	size_t clientBodySizeMax;
 	errorPagePair errorPage;
-
+	std::list<std::string>	requiredKeysList;
 	// Location class
 	class Location
 	{
@@ -58,6 +61,7 @@ public:
 		Path defaultFile;
 		Path uploadRoute;
 		CgiPair cgi;
+		std::list<std::string>	requiredLocationKeysList;
 		~Location();
 	};
 	Server();
