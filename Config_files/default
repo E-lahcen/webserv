@@ -64,7 +64,7 @@ server
     server_name=test1
     
 
-	listen=127.0.0.1:8081
+	listen=0.0.0.0:8081
 
 	client_body_size_max=100000000
 

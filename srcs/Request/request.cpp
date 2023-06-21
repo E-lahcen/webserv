@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:53 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/21 17:32:49 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:11:32 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,7 +330,17 @@ void request::GetRequest( Servers& servers )
 
     for (; its != servers.end(); its++)
     {
-        if (its->hostname == this->Rhostname && its->port == this->Rport && this->StatutCode == 0)
+        if (its->serverName == this->Rhostname && its->port == this->Rport)
+        {
+            c++;
+            this->Rhostname = its->hostname;
+            this->errorPage =  its->errorPage;
+            this->BodySizeMax = its->getBodySizeMax();
+            if (this->StatutCode == 0)
+                CheckIfMethodAllowed(its);
+            break;
+        } 
+        else if (its->hostname == this->Rhostname && its->port == this->Rport)
         {
             c++;
             this->errorPage =  its->errorPage;

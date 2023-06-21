@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 22:02:26 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/21 16:20:36 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/21 21:59:26 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,20 +61,25 @@ void request::IsDirectoryPost(iterator_location &itl)
     {
         if (itl->second.autoindex == 1)
         {
-            std::string index = ScanFolderForIndex(this->path);
-            if (index != "NotFound")
+            for (FilePaths::iterator it = itl->second.defaultFiles.begin(); it != itl->second.defaultFiles.end(); it++)
             {
-                this->path = JoinePathToRoot(this->path , index);
+                this->path = JoinePathToRoot(itl->second.root, *it);
+                if (access(this->path.c_str(), F_OK) == 0)
+                    break;
+            }
+            struct stat info;
+            if (stat(this->path.c_str(), &info) == 0)
+            {
                 if (access(this->path.c_str(), R_OK) == 0)
                     IsFile(itl);
                 else
-                    CheckErrorsPage(403); 
+                    CheckErrorsPage(403);
             }
             else
-                CheckErrorsPage(404);
+                CheckErrorsPage(403);
         }
         else
-            CheckErrorsPage(404);
+            CheckErrorsPage(403);
     }
     else
     {
