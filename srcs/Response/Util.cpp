@@ -62,7 +62,7 @@ std::string Response::FindingExten(std::string extension)
 // calculate Length of File 
 size_t Response::LengthFile(std::string filename)
 {
-    size_t size;
+    size_t size = 0;
     FILE *file = fopen(filename.c_str(), "r");
     if (file != nullptr)
     {

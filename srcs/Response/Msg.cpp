@@ -49,7 +49,6 @@ void Response::ResponseHeader(request &r)
         r.RemoveFile(storpath);
         storpath.clear();
     }
-
     if(GettingExtension(r.CGIPath) == ".php")
     {
         storpath = r.path;

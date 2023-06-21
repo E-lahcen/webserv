@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:53 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/21 03:14:42 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 15:35:36 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,8 +274,7 @@ void request::CheckIfMethodAllowed(iterator_server &its)
                     struct stat info;
                     if (stat(this->path.c_str(), &info) != 0)
                     {
-                        CheckErrorsPage(404);
-                        return ;
+                        this->path = itl->second.root;
                     }
                 }
                 handleMethodLocation(itl);
@@ -311,8 +310,7 @@ void request::CheckIfMethodAllowed(iterator_server &its)
                 struct stat info;
                 if (stat(this->path.c_str(), &info) != 0)
                 {
-                    CheckErrorsPage(404);
-                    return ;
+                    this->path = itl->second.root;
                 }
             }
             handleMethodLocation(itl);

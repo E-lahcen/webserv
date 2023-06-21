@@ -37,7 +37,6 @@ std::string Response::HeaderOFCGI(request &r)
 
     Header =  CasesStatusline(r);
     Header += Timing();
-
     size = read(this->OpenedFd, buf, size);
     if (size <= 0)
     {
@@ -45,7 +44,6 @@ std::string Response::HeaderOFCGI(request &r)
         if (HeaderInCaseErrorCGI(r) == true)
             return ("empty");
     }
-
 
     std::string file_php(buf,size);
 
@@ -58,7 +56,6 @@ std::string Response::HeaderOFCGI(request &r)
     close(this->OpenedFd);
 
     this->OpenedFd = open(r.path.c_str(), O_RDWR | O_TRUNC , 0777);
-    
     if (this->OpenedFd < 0)
     {
         if (HeaderInCaseErrorCGI(r) == true)

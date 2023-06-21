@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Post.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 22:02:26 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/21 05:24:14 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 16:20:36 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void request::CreatFileInDirectoryOfUpload(std::string &path)
             return ;
         }
         this->path = path;
-        std::cout << "path of upload" << this->path << std::endl;
     }
     else
         this->path = path;
@@ -80,7 +79,9 @@ void request::IsDirectoryPost(iterator_location &itl)
     else
     {
         this->uri += '/';
+        this->path = this->uri;
         SetStatutCode(301);
+        this->finishRead = 0;
     }
 }
 
@@ -92,11 +93,9 @@ void request::CreatFileInDirectoryOfCgi(iterator_location &itl)
     if (S_ISDIR(info.st_mode))
     {
         this->path += GetRandomName() + GetExtension(this->map["Content-Type"]);
-        std::cout << "path test ==== 1111" <<this->path << std::endl; 
         this->file = open(this->path.c_str(), O_CREAT | O_RDWR, 0777);
         if (this->file < 0)
         {
-            std::cout << "here ==== 1111\n"; 
             this->cgi = false;
             RemoveFile(this->path);
             CheckErrorsPage(500);
@@ -108,11 +107,9 @@ void request::CreatFileInDirectoryOfCgi(iterator_location &itl)
         if (mkdir(path.c_str(), S_IRWXU) == 0)
         {
             this->path += GetRandomName() + GetExtension(this->map["Content-Type"]);
-            std::cout << "path test ==== 2222" <<this->path << std::endl; 
             this->file = open(this->path.c_str(), O_CREAT | O_RDWR, 0777);
             if (this->file < 0)
             {
-                std::cout << "here ==== 2222\n"; 
                 this->cgi = false;
                 RemoveFile(this->path);
                 CheckErrorsPage(500);
@@ -159,7 +156,7 @@ void request::Post(iterator_location &itl)
     else if (itl->second.uploadRoute.empty() && this->StatutCode == 0)
     {
         struct stat info;
-        if (stat(this->path.c_str(), &info) == 0)
+        if (stat(this->path.c_str(), &info) == 0)  
         {
             if (S_ISDIR(info.st_mode) == 1 && this->StatutCode == 0)
             {

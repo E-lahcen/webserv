@@ -36,7 +36,6 @@ void Response::CGI(request &r)
 
     if (child_pid == 0)
         ChildProcess(r);
-    
     if (r.GeterMethod() == "POST")
     {
         storpath = r.path;

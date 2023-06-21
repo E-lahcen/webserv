@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
             if ($avatar_size < 1000000) 
             {
                 $avatar_name_new = uniqid('', true) . '.' . $avatar_actual_ext;
+                if (!file_exists("./uploadCGI/"))
+                    mkdir('uploadCGI');
                 $avatar_destination = './uploadCGI/' . $avatar_name_new;
                 move_uploaded_file($avatar_tmp_name, $avatar_destination);
                 $_COOKIE['name'] = $_POST['name'];
