@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 16:53:30 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/21 05:07:31 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 20:08:04 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ class Config
 {
 public:
 	std::vector<Server>		configServers;
+	std::vector<std::string>	listServerNames;
 
 	Config(const char *filePath);
 	Server::Location getFromLocation(const Path &path) const;

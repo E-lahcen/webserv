@@ -51,7 +51,7 @@ CPPRESPONSE  := CGI_utils.cpp \
 
 
 
-CFILES		:=	main_test_request_config.cpp \
+CFILES		:=	main.cpp \
 				$(foreach F,$(CPPCONFIG),$(CONFIGDIR)/$(F)) \
 				$(foreach F,$(CPPSERVER),$(SERVERDIR)/$(F)) \
 				$(foreach F,$(CPPUTILS),$(UTILSDIR)/$(F)) \

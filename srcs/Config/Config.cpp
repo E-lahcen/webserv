@@ -8,7 +8,6 @@ Config::Config(const char *filePath)
     load(filePath);
     createDefaultServer();
     std::cout << "Local Ip adress for Default Server : " << configServers.back().hostname << std::endl;
-    std::cout << "Connected Servers : " << configServers.size() << std::endl;
     Network::initServersSockets(configServers);
 }
 
@@ -44,7 +43,7 @@ void Config::load(const char *path)
             else if (isValidKey(key))
             {
                 configServers.back().requiredKeysList.remove(key);
-                configServers.back().setSettings(key, value);
+                configServers.back().setSettings(listServerNames, key, value);
             }
             else
                 throw std::runtime_error("Invalid key in configuration: " + key);

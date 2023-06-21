@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/21 04:40:52 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 21:07:03 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,16 @@ void Network::initServersSockets(Servers& servers)
 		 server != servers.end(); ++server)
 	{
 		createListenSocket(server->socketFd, servers);
-		makeServerListen(server, servers);
+		// try{
+			makeServerListen(server, servers);
+		// }
+		// catch(const std::exception& e)
+		// {
+		// 	std::cerr << e.what() << '\n';
+		// }
 		addPollFd(server);
 	}
-
+    std::cout << "Connected Servers : " << servers.size() << std::endl;
 	addServerFDListenCollection(servers);
 	while (1)
 	{
@@ -135,8 +141,9 @@ void Network::makeServerListen(const ServerRef &server, Servers &servers)
 			 serverAddr->ai_addrlen) < 0)
 	{
 		std::string error = "failed to bind socket to ";
-		error += server->hostname + ':' + server->port;
+		error += server->serverName + ' ' + server->hostname + ':' + server->port;
 		clearServersSockets(servers);
+		// servers.erase(server);
 		throwErrnoException(error);
 	}
 

@@ -1,6 +1,6 @@
 server
 {
-    
+    server_name=test
 
 	listen=127.0.0.1:8083
 
@@ -31,7 +31,7 @@ server
 
 		# default=  inde ind index.html
 
-		cgi=.py /usr/local/bin/python3
+		cgi=.py /usr/bin/python
 		cgi=.php /root/php-cgi
 		# upload=/upload
 
@@ -50,7 +50,7 @@ server
 
 		# default=/index.html
 
-		cgi=.py /usr/local/bin/python3
+		cgi=.py /usr/bin/python
 		cgi=.php /root/php-cgi
 
 		# upload=/goinfre
@@ -58,11 +58,13 @@ server
 	}
 
 }
+
 server
 {
+    server_name=test1
     
 
-	listen=127.0.0.1:8084
+	listen=127.0.0.1:8081
 
 	client_body_size_max=100000000
 
@@ -91,68 +93,7 @@ server
 
 		# default= /index.html 
 
-		cgi=.py /usr/local/bin/python3
-		cgi=.php /root/php-cgi
-		# upload=/upload
-
-	}
-
-	location /b
-    {
-
-		allow_methods=GET POST DELETE
-
-		# redirect=301 index.html
-
-		root={PATH}/root
-		
-		autoindex=on
-
-		# default=/index.html
-
-		cgi=.py /usr/local/bin/python3
-		cgi=.php /root/php-cgi
-
-		# upload=/goinfre
-
-	}
-
-}
-
-server
-{
-    
-
-	listen=127.0.0.1:8085
-
-	client_body_size_max=100000000
-
-	#error_page=404 /error_page.html
-	error_page=400 /error_page/400.html
-	error_page=403 /error_page/403.html
-	error_page=404 /error_page/404.html
-	error_page=405 /error_page/405.html
-	error_page=409 /error_page/409.html
-	error_page=413 /error_page/413.html
-	error_page=414 /error_page/414.html
-	error_page=500 /error_page/500.html
-	error_page=501 /error_page/501.html
-	error_page=505 /error_page/505.html
-
-	location /
-    {
-
-		allow_methods=GET	POST DELETE
-
-		# redirect=301 /a/index.html
-	
-		root={PATH}/root
-		
-		autoindex=on
-
-		# default= /index.html 
-
-		cgi=.py /usr/local/bin/python3
+		cgi=.py /usr/bin/python
 		cgi=.php /root/php-cgi
 		# upload=/upload
 
@@ -171,7 +112,7 @@ server
 
 		# default=/index.html
 
-		cgi=.py /usr/local/bin/python3
+		cgi=.py /usr/bin/python
 		cgi=.php /root/php-cgi
 
 		# upload=/goinfre

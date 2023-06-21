@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:04 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/16 17:30:56 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 20:40:22 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,15 @@ Server::Location::Location() : get(false), post(false), del(false), autoindex(fa
     requiredLocationKeysList = copyRequiredLocationKeysList;
 }
 
-void Server::setSettings(std::string &key, std::string &value)
+void Server::setSettings(std::vector<std::string>& listServerNames, std::string &key, std::string &value)
 {
     if (key == "server_name")
+    {
+        if (std::find(listServerNames.begin(), listServerNames.end(), value) != listServerNames.end())
+            throw std::runtime_error("Invalid configuration : Duplicate Name servers");
+        listServerNames.push_back(value);
         serverName = value;
+    }
     if (key == "listen")
         parseHostnamePort(value);
     else if (key == "error_page")

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:53 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/21 15:35:36 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/21 17:32:49 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,16 +324,28 @@ void request::CheckIfMethodAllowed(iterator_server &its)
 void request::GetRequest( Servers& servers )
 {
     Getheader();
+
+    int c = 0;
     std::vector<Server>::iterator its = servers.begin();
+
     for (; its != servers.end(); its++)
     {
         if (its->hostname == this->Rhostname && its->port == this->Rport && this->StatutCode == 0)
         {
+            c++;
             this->errorPage =  its->errorPage;
             this->BodySizeMax = its->getBodySizeMax();
             if (this->StatutCode == 0)
                 CheckIfMethodAllowed(its);
             break;
         }
+    }
+    if (!c)
+    {
+        its = servers.begin();
+        this->errorPage =  its->errorPage;
+        this->BodySizeMax = its->getBodySizeMax();
+        if (this->StatutCode == 0)
+            CheckIfMethodAllowed(its);
     }
 }
