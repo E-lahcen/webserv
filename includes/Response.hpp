@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
@@ -8,16 +6,27 @@
 #include <string.h>
 #include <unistd.h>
 #include <cstring>
+#include <fcntl.h>
 
 
 class request;
 
 class Response{
     public:
+
     Response();
 
 
+    int Status_Code;
+    int fd;
+    int OpenedFd;
+    int OPennedFdCGI;
+    pid_t child_pid;
+    pid_t wait_child;
+    bool wait;
+    std::string HeaderCGI;
 
+    std::string storpath;
 
 
     //Utils
@@ -28,22 +37,20 @@ class Response{
     bool CheckingStatusCode(int status_code);
     std::string GettingContentType(std::string path);
     std::string FindingExten(std::string extension);
+    void ErrorHandling(request &r);
+    std::string GettingExtension(std::string path);
 
-    int Status_Code;
-    int fd;
-    int OpenedFd;
-
+    
 
     //bools
 
     bool FinishedHeader;
     bool Closedfile;
     bool Opening;
-
+    bool Error;
 
     //Responsse
     void ResponseMessage(request &r);
-
 
 
 
@@ -73,14 +80,20 @@ class Response{
     void HeaderAndBodyOfCreated(request &r);
 
 
-    // void CasesStatusline(int fd, request &r);
-    // void ResponseHeader(request &r);
-    // void Timing();
-    // void ResponseBody(request &r);
-    // long LengthFile(std::string filename);
-    // std::string HtmlContent(request &r);
-    // std::string ContentLengthFile(request &r);
-    // std::string ContentTypeFile(request &r);
+    //CGI
+    void CGI(request &r);
+    pid_t CheckChildPid();
+    void ChildProcess(request &r);
+    
+
+    //CGI_ustils
+    char *envp_element(std::string str);
+    char **param_exec(std::string executable, std::string script);
+    char **env(request &r);
+    std::string HeaderOFCGI(request &r);
+    bool HeaderInCaseError(request &r);
+    bool HeaderInCaseErrorCGI(request &r);
+    void HeaderOfDelete(request &r);
 };
 
 #endif

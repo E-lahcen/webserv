@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 11:55:05 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/15 17:11:50 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/18 22:23:39 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ bool is_number(const std::string &s)
 
 void check_host_name(int hostname) { //This function returns host name for local computer
    if (hostname == -1)
-      throw std::runtime_error("Gethostbyname() error during initilizing local IP address");
+      throw std::runtime_error("Gethostbyname() error during initilizing local IP address when checking hostname");
 
 }
 void check_host_entry(struct hostent * hostentry) { //find host info from host name

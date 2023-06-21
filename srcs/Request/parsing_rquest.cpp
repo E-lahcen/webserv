@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 21:53:31 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/13 21:54:02 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/20 20:31:59 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,12 @@ void request::Getheader()
     this->method = tmp[0];
     this->uri = tmp[1];
     this->version = tmp[2];
+
+    if (this->uri.find("?") != std::string::npos)
+    {
+        this->QueryString = this->uri.substr(this->uri.find("?") + 1);
+        this->uri = this->uri.substr(0, this->uri.find("?"));
+    }
 
     tmp.clear();
 
@@ -60,12 +66,17 @@ void request::Getheader()
         first.clear();
         secend.clear();
     }
-
-    // std::map<std::string, std::string>::iterator it = map.begin();
-    // for(; it != map.end(); it++)
-    //     std::cout << it->first << " " << it->second << std::endl;
 }
 
+
+size_t convert_hexa(std::string hexa)
+{
+    size_t decimal;
+    std::stringstream h;
+    h << std::hex << hexa;
+    h >> decimal;
+    return (decimal);
+}
 
 
 //parsing request chunked
@@ -83,21 +94,42 @@ void request::GetChunked(std::string &body)
         {
             if (CheckHexa(hexa) == 1)
             {
-                size_t decimal = strtol(hexa.c_str(), NULL, 16);
+                size_t decimal = convert_hexa(hexa);
                 if (body.find("\r\n0\r\n") != std::string::npos)
                     this->finishRead = 0;
                 if (body.size() >= decimal)
                 {
                     size_t p = body.find(hexa);
                     body.erase(p - 1,hexa.length() + 3);
-                    write(this->file, body.substr(0, decimal).c_str(), decimal);
-                    body.erase(0, decimal);
+                    if (!body.empty() && decimal != 0)
+                    {   
+                        this->ContentLength += decimal;
+                        if (checkSizeBody() == -1)
+                            return ;
+                        if (write(this->file, body.substr(0, decimal).c_str(), decimal) <= 0)
+                        {
+                            ErrorWrite();
+                            return ;
+                        }
+                        body.erase(0, decimal);
+                    }
                 }
                 if (body.find("\r\n0\r\n") != std::string::npos)
                 {
                     body.erase(body.find("\r\n0\r\n"));
-                    write(this->file, body.c_str(), body.size());
-                    body.clear();
+                    if (!body.empty())
+                    {
+                        this->ContentLength += body.size();
+                        if (checkSizeBody() == -1)
+                            return ;
+                        if (write(this->file, body.c_str(), body.size()) <= 0)
+                        {
+                            ErrorWrite();
+                            return ;
+                        }
+                        close(this->file);
+                        body.clear();
+                    }
                 }
             }
         }
@@ -156,14 +188,23 @@ void request::GetMultipart(std::string &body)
         this->Multipart.push_back(std::make_pair(name, string));
         i = p + number.length() + 3;
     }
-    std::vector<std::pair<std::string, std::string> >::iterator it = this->Multipart.begin();    
+
+    std::vector<std::pair<std::string, std::string> >::iterator it = this->Multipart.begin();
+    for (; it != Multipart.end(); it++)
+    {
+        if (it->second.length() > this->BodySizeMax)
+        {
+            CheckErrorsPage(413);
+            return ;
+        }
+    }
+
     std::ofstream n;
+    it = this->Multipart.begin();
     for (; it != Multipart.end(); it++)
     {
         n.open(it->first);
         n << it->second;
-        if (it->second.length() > this->BodySizeMax)
-            SetStatutCode(413);
         n.close();
     }
 }

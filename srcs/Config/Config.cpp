@@ -26,14 +26,15 @@ void Config::load(const char *path)
         throw std::runtime_error("Failed to open configuration file: " + filePath);
 
     std::string line;
-    bool    validServerCheck = false;
+    bool    validServerCheck            = false;
+    bool    validOpenBracketLocation    = true;
     while (std::getline(file, line))
     {
         line = trim_spaces(line);
-        if (setSyntax(line, validServerCheck))
+        if (setSyntax(line, validServerCheck, validOpenBracketLocation))
             continue; // Skip empty lines, comments, and block delimiters
         size_t delimiterPos = line.find('=');
-        if (delimiterPos != std::string::npos && validServerCheck)
+        if (delimiterPos != std::string::npos && validServerCheck && validOpenBracketLocation)
         {
             std::string key = trim_spaces(line.substr(0, delimiterPos));
             std::string value = trim_spaces(line.substr(delimiterPos + 1));
@@ -56,6 +57,7 @@ void Config::load(const char *path)
         else
             throw std::runtime_error("Invalid syntax in configuration!");
     }
+    file.close();
     checkControl();
 }
 
@@ -64,7 +66,7 @@ bool Config::isValidBrackets() const
     return (Brackets[0] == Brackets[1]);
 }
 
-bool Config::setSyntax(std::string &line, bool  &resetServerCheck)
+bool Config::setSyntax(std::string &line, bool  &resetServerCheck, bool  &validOpenBracketLocation)
 {
     if (line == "server")
     {
@@ -78,6 +80,7 @@ bool Config::setSyntax(std::string &line, bool  &resetServerCheck)
         return true;
     else if (line == "{" && resetServerCheck)
     {
+        validOpenBracketLocation = true;
         Brackets[0] += 1;
         return true;
     }
@@ -142,19 +145,20 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
     std::getline(iss, locationPath);
 
     locationPath = trim_spaces(locationPath);
-    if (locationPath.empty())
-        throw std::runtime_error("Location Path is empty!");
+    if (locationPath[0] != '/')
+        throw std::runtime_error("Invalid Location Path!");
 
     std::string line;
-    bool    validServerCheck = true;
+    bool    validServerCheck            = true;
+    bool    validOpenBracketLocation    = false;
     while (std::getline(ifile, line))
     {
         line = trim_spaces(line);
-        if (setSyntax(line, validServerCheck) && line != "}")
+        if (setSyntax(line, validServerCheck, validOpenBracketLocation) && line != "}")
             continue; // Skip empty lines, comments, and block delimiters
 
         size_t delimiterPos = line.find('=');
-        if (delimiterPos != std::string::npos)
+        if (delimiterPos != std::string::npos && validOpenBracketLocation)
         {
             std::string key = trim_spaces(line.substr(0, delimiterPos));
             std::string value = trim_spaces(line.substr(delimiterPos + 1));
@@ -171,7 +175,7 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
                 else if (key == "autoindex")
                     location.autoindex = (value == "on");
                 else if (key == "default")
-                    location.defaultFile = value;
+                    location.defaultFiles = parseDefaultFile(value);
                 else if (key == "upload")
                     location.uploadRoute = value;
                 else if (key == "cgi")
@@ -183,6 +187,8 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
         }
         else if (line == "}")
             break;
+        else
+            throw std::runtime_error("Invalid Location Bracket syntax!");
     }
     if (!location.requiredLocationKeysList.empty())
         throw std::runtime_error("Non complete location settings, complete all keys needed!\nRequired location settings : allow_methods, root");
@@ -201,6 +207,24 @@ std::pair<StatusNbr, Path> Config::parseRedirection(const std::string &line)
     if (!stat || value.empty())
         throw std::runtime_error("Invalid Redirection");
     return (std::pair<StatusNbr, Path>(stat, value));
+}
+
+FilePaths   Config::parseDefaultFile( std::string& value )
+{
+    std::stringstream ss(value);
+    std::string word;
+    std::vector<Path>   vec;
+
+    while (ss >> word)
+    {
+        word = trim_spaces(word);
+        vec.push_back(word);
+        std::cout << " path = " << word << "\t";
+    }
+    std::cout << std::endl;
+    if (vec.empty())
+        throw std::runtime_error("Invalid configuration : default path must be filled!");
+    return vec;
 }
 
 void Config::parseMethods(Server::Location &location, const std::string &value)
@@ -254,7 +278,7 @@ void	Config::createDefaultServer()
     loc.route = "/";
     loc.get = true;
     loc.root = getlocalPath() + "/root";
-    loc.defaultFile = "/index.html";
+    loc.defaultFiles.push_back("/index.html");
 
     serv.setServerLocations(std::make_pair("/", loc));
 

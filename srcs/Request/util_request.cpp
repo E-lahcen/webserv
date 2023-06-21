@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 21:50:49 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/15 00:38:58 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/20 21:38:55 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,41 +92,43 @@ int CheckUri(std::string uri)
 }
 
 
-void request::Check_methods(iterator_location &itl, iterator_server &its)
+void request::Check_methods()
 {
     if (this->method == "PUT" || this->method == "PATCH" || this->method == "HEAD" || this->method == "OPTIONS")
-        CheckErrorsPage(501, itl, its);
+        CheckErrorsPage(501);
     else if (this->method == "GET" || this->method == "POST" || this->method == "DELETE")
         SetStatutCode(0);
     else
-        CheckErrorsPage(400, itl, its);
+        CheckErrorsPage(400);
 }
 
 
 //check if header is all good and set statut code
 
-void request::CheckErrorsHeader(iterator_location &itl, iterator_server &its)
+void request::CheckErrorsHeader()
 {
     SetStatutCode(0);
-    Check_methods(itl, its);
+    Check_methods();
     if(this->version != "HTTP/1.1")
-        CheckErrorsPage(505, itl, its);
+        CheckErrorsPage(505);
     if(this->map.find("Transfer-Encoding") != this->map.end() && this->StatutCode == 0)
     {
         std::string name;
         name = this->map["Transfer-Encoding"];
         if (name != "chunked")
-            CheckErrorsPage(501, itl, its);
+            CheckErrorsPage(501);
     }
     if (this->method == "POST" && this->StatutCode == 0)
     {
         if (this->map.find("Transfer-Encoding") == this->map.end() && this->map.find("Content-Length") == this->map.end())
-            CheckErrorsPage(400, itl, its);
+            CheckErrorsPage(400);
+        else if (this->map.find("Transfer-Encoding") != this->map.end() && this->map.find("Content-Length") != this->map.end())
+            CheckErrorsPage(400);
     }
     if (CheckUri(this->uri) == 0 && this->StatutCode == 0)
-        CheckErrorsPage(400, itl, its);
+        CheckErrorsPage(400);
     if (this->uri.length() > 2048 && this->StatutCode == 0)
-        CheckErrorsPage(414, itl, its);
+        CheckErrorsPage(414);
 }
 
 //join to root
@@ -211,13 +213,42 @@ std::string ScanFolderForIndex(std::string &path)
 }
 
 
-void request::CheckErrorsPage(int status_code, iterator_location &itl, iterator_server &its)
+
+
+void request::CheckErrorsPage(int status_code)
 {
     SetStatutCode(status_code);
     this->finishRead = 0;
-    if (its->errorPage.find(status_code) != its->errorPage.end())
-        this->path = JoinePathToRoot(itl->second.root , its->errorPage[status_code]);
+    if (this->errorPage.find(status_code) != this->errorPage.end())
+        this->path = JoinePathToRoot(this->ROT , this->errorPage[status_code]);
     else
         this->path.clear();
     std::cout << status_code << " " << this->path << std::endl;
+}
+
+
+//check size body
+int request::checkSizeBody()
+{
+    if (this->ContentLength > this->BodySizeMax)
+    {
+        this->finishRead = 0;
+        close(this->file);
+        body.clear();
+        RemoveFile(this->path);
+        CheckErrorsPage(413);
+        return (-1);
+    }
+    return (0);
+}
+
+//check Error Write
+void request::ErrorWrite()
+{
+    this->finishRead = 0;
+    close(this->file);
+    RemoveFile(this->path);
+    this->path.clear();
+    CheckErrorsPage(500);
+    body.clear();
 }

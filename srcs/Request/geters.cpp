@@ -6,14 +6,14 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 21:52:04 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/04 22:03:11 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/20 16:04:05 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <request.hpp>
 
 
-//method Geters
+//Geters
 
 std::string request::GeterMethod() const
 {

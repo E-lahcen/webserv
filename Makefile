@@ -34,12 +34,22 @@ CPPREQUEST	:=	request.cpp \
 				parsing_rquest.cpp \
 				util_request.cpp \
 				Post.cpp \
-				Get.cpp
+				Get.cpp \
+				Delete.cpp
 
-CPPRESPONSE  := Response_msg.cpp \
+CPPRESPONSE  := CGI_utils.cpp \
+				CGI.cpp \
+				Header_Cases.cpp \
+				Header.cpp \
+				Header_error.cpp \
+				Msg_error.cpp \
+				Msg.cpp \
 				Response.cpp \
-				Response_Errors.cpp \
-				Utils_respnonse.cpp 
+				Util_error.cpp \
+				Util.cpp \
+				Header_php.cpp 
+
+
 
 CFILES		:=	main_test_request_config.cpp \
 				$(foreach F,$(CPPCONFIG),$(CONFIGDIR)/$(F)) \

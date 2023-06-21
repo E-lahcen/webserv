@@ -1,0 +1,100 @@
+server
+{
+    
+	server_name=www.exemple.com
+
+	listen=127.0.0.1:8083
+
+	client_body_size_max=100
+
+	#error_page=404 /error_page.html
+	error_page=400 /error_page/400.html
+	error_page=403 /error_page/403.html
+	error_page=404 /error_page/404.html
+	error_page=405 /error_page/405.html
+	error_page=409 /error_page/409.html
+	error_page=413 /error_page/413.html
+	error_page=414 /error_page/414.html
+	error_page=500 /error_page/500.html
+	error_page=501 /error_page/501.html
+	error_page=505 /error_page/505.html
+
+	location / 
+    {
+
+		allow_methods=GET
+
+		# redirect=301 /a/index.html
+		#delete space in red
+		#" /index.html"
+	
+		root={PATH}/root
+		
+		autoindex=on
+
+		default=/Project.html
+
+		cgi=.py /bin/python3
+
+		upload=/upload
+
+	}
+
+	location /put_test
+    {
+
+		allow_methods=GET POST DELETE
+
+		# redirect=301 index.html
+
+		root={PATH}/root
+		
+		autoindex=on
+
+		default=/index.html
+
+		cgi=.bla /Users/lelhlami/Desktop/cgi_tester
+
+		upload=/uplaod
+
+	}
+
+	location /psot_body
+    {
+
+		allow_methods= POST
+
+		# redirect=301 index.html
+
+		root={PATH}/root
+		
+		autoindex=on
+
+		default=/index.html
+
+		cgi=.bla /Users/lelhlami/Desktop/cgi_tester
+
+		upload=/uplaod
+
+	}
+
+	location /directory
+    {
+
+		allow_methods= GET
+
+		# redirect=301 index.html
+
+		root=/Users/lelhlami/Desktop/YoupiBanane
+		
+		autoindex=on
+
+		default=/youpi.bad_extension
+
+		cgi=.bla /Users/lelhlami/Desktop/cgi_tester
+
+		upload=/uplaod
+
+	}
+
+}

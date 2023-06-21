@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Post.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrahali <nrahali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 22:02:26 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/15 01:31:38 by nrahali          ###   ########.fr       */
+/*   Updated: 2023/06/20 22:16:29 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,20 @@ void request::CreatFileInDirectoryOfUpload(std::string &path)
         path += GetRandomName();
         path += GetExtension(this->map["Content-Type"]);
         this->file = open(path.c_str(), O_CREAT | O_RDWR, 0777);
+        if (this->file < 0)
+        {
+            CheckErrorsPage(500);
+            return ;
+        }
         this->path = path;
-        std::cout << "path of upload" <<this->path << std::endl;
+        std::cout << "path of upload" << this->path << std::endl;
     }
     else
         this->path = path;
     SetStatutCode(201);
 }
 
-void    request::upload(iterator_location &itl, iterator_server &its)
+void    request::upload(iterator_location &itl)
 {
     struct stat info;
     if (stat(itl->second.root.c_str(), &info) == 0)
@@ -46,12 +51,12 @@ void    request::upload(iterator_location &itl, iterator_server &its)
         }
     }
     else
-        CheckErrorsPage(404, itl, its);      
+        CheckErrorsPage(404);      
 }
 
 
 
-void request::IsDirectoryPost(iterator_location &itl, iterator_server &its)
+void request::IsDirectoryPost(iterator_location &itl)
 {
     if (this->uri[this->uri.size() -1] == '/')
     {
@@ -62,15 +67,15 @@ void request::IsDirectoryPost(iterator_location &itl, iterator_server &its)
             {
                 this->path = JoinePathToRoot(this->path , index);
                 if (access(this->path.c_str(), R_OK) == 0)
-                    IsFile(itl, its);
+                    IsFile(itl);
                 else
-                    CheckErrorsPage(403, itl, its); 
+                    CheckErrorsPage(403); 
             }
             else
-                CheckErrorsPage(404, itl, its);
+                CheckErrorsPage(404);
         }
         else
-            CheckErrorsPage(404, itl, its);
+            CheckErrorsPage(404);
     }
     else
     {
@@ -79,7 +84,42 @@ void request::IsDirectoryPost(iterator_location &itl, iterator_server &its)
     }
 }
 
-void request::IsFile(iterator_location &itl, iterator_server &its)
+void request::CreatFileInDirectoryOfCgi(iterator_location &itl)
+{
+    this->path = itl->second.root + "/CGIFILE/";
+    struct stat info;
+    stat(this->path.c_str(), &info);
+    if (S_ISDIR(info.st_mode))
+    {
+        this->path += GetRandomName() + GetExtension(this->map["Content-Type"]);
+        this->file = open(this->path.c_str(), O_CREAT | O_RDWR, 0777);
+        if (this->file < 0)
+        {
+            this->cgi = false;
+            RemoveFile(this->path);
+            CheckErrorsPage(500);
+            return ;
+        }
+    }
+    else
+    {
+        if (mkdir(path.c_str(), S_IRWXU) == 0)
+        {
+            this->path += GetRandomName() + GetExtension(this->map["Content-Type"]);
+            this->file = open(this->path.c_str(), O_CREAT | O_RDWR, 0777);
+            if (this->file < 0)
+            {
+                this->cgi = false;
+                RemoveFile(this->path);
+                CheckErrorsPage(500);
+                return ;
+            }
+        }
+    }
+}
+
+
+void request::IsFile(iterator_location &itl)
 {
     std::string search;
     if (this->path.find_first_of(".") != std::string::npos)
@@ -89,28 +129,29 @@ void request::IsFile(iterator_location &itl, iterator_server &its)
         if (itl->second.cgi.find(search) != itl->second.cgi.end())
         {
             SetStatutCode(200);
-            std::cout <<"file path =" <<this->path << std::endl;
-            //flag to cgi
             this->cgi = true;
-            std::cout << "i have to pass it to cgi" << std::endl;
-            this->finishRead = 0;
+            this->CGIPath = this->path;
+            PathExtensionCgi = itl->second.cgi.find(search)->second;
+            if (this->method == "POST")
+                CreatFileInDirectoryOfCgi(itl);
+            if (this->method == "GET")
+                this->finishRead = 0;
         }
         else
-            CheckErrorsPage(403, itl, its);
+            CheckErrorsPage(403);
     }
     else
     {
-        std::cout <<this->path << std::endl;
         SetStatutCode(200);
         this->finishRead = 0;
     }
 }
 
 //request Post
-void request::Post(iterator_location &itl, iterator_server &its)
+void request::Post(iterator_location &itl)
 {
     if (!itl->second.uploadRoute.empty() && this->StatutCode == 0)
-        upload(itl, its);
+        upload(itl);
     else if (itl->second.uploadRoute.empty() && this->StatutCode == 0)
     {
         struct stat info;
@@ -118,17 +159,17 @@ void request::Post(iterator_location &itl, iterator_server &its)
         {
             if (S_ISDIR(info.st_mode) == 1 && this->StatutCode == 0)
             {
-               IsDirectoryPost(itl, its);
+               IsDirectoryPost(itl);
             }
             if(S_ISREG(info.st_mode) == 1 && this->StatutCode == 0)
             {
                 if (access(this->path.c_str(), R_OK) == 0)
-                    IsFile(itl, its);
+                    IsFile(itl);
                 else
-                    CheckErrorsPage(403, itl, its); 
+                    CheckErrorsPage(403); 
             }
         }
         else
-            CheckErrorsPage(404, itl, its);            
+            CheckErrorsPage(404);            
     }
 }

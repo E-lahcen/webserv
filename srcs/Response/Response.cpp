@@ -6,19 +6,11 @@ Response::Response()
       this->FinishedHeader = false;
       this->Opening = false;
       this->OpenedFd = -1;
-}
-
-// Header and body of case of Created Data POST 
-void Response::HeaderAndBodyOfCreated(request &r)
-{
-    std::string line;
-
-    line = CasesStatusline(r);
-    line += "Location: ";
-    line += r.path;
-    line += "\nContent-Type: text/plain\n\n";
-    line += "The resource has been successfully created.";
-    write(fd, line.c_str(), line.size());
+      this->child_pid = -1;
+      this->wait_child = -1;
+      this->OPennedFdCGI = -1;
+      this->wait = false;
+      this->Error = false;
 }
 
 
@@ -26,27 +18,47 @@ void Response::HeaderAndBodyOfCreated(request &r)
 void Response::ResponseMessage(request &r)
 {
     this->Status_Code = r.GetStatutCode();
-    // std::cout << "path is = " << r.path << std::endl;
-    if (this->Status_Code == 301)
+    if (r.cgi == true)
     {
-        std::cout << "path is = " << r.path << std::endl;
-        HeaderOfRedirect(r);
-        this->Closedfile = true;
-        return ;
+        r.cgi = false;
+        this->wait = true;
+        CGI(r);
     }
-    if (this->Status_Code == 201)
-    {
-        HeaderAndBodyOfCreated(r);
-        this->Closedfile = true;
-        return ;
-    }
-    if (CheckingStatusCode(Status_Code) == true)
-        this->ResponseMessageError(r);
-    else
-    {
-        OpeningFile(r.path);
-        if (this->FinishedHeader == false)
-            ResponseHeader(r);
-        ResponseBody(r);
+    if (CheckChildPid() != 0 || (CheckChildPid() == 0  && this->wait == false))
+    { 
+        if (this->Status_Code == 204 && this->Error == false)
+        {
+            HeaderOfDelete(r);
+            this->Closedfile = true;
+            return ;
+        }
+        if (this->Status_Code == 301 && this->Error == false)
+        {
+            HeaderOfRedirect(r);
+            this->Closedfile = true;
+            return ;
+        }
+
+        if (this->Status_Code == 201 && this->Error == false)
+        {
+            HeaderAndBodyOfCreated(r);
+            this->Closedfile = true;
+            return ;
+        }
+
+        if (CheckingStatusCode(Status_Code) == true && this->Error == false)
+            this->ResponseMessageError(r);
+        
+        else if (this->Error == false)
+        {
+            OpeningFile(r.path);
+            if (this->FinishedHeader == false)
+                ResponseHeader(r);
+            if (this->Error == true)
+                return ;
+            ResponseBody(r);
+        }
+        else
+            return ;
     }
 }

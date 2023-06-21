@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        font-face {
+            font-family: 'Inconsolata';
+            src: url('/error_imgs/inconsolata.ttf') format('truetype');
+        }
+        .top-left {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+        .top-right{
+          position: absolute;
+          top: 0px;
+          right: 40px;
+        }
+        .h1{
+          position: absolute;
+          top: 70px;
+          left: 300px;
+          color: #FF8000;
+          text-transform: uppercase;
+          font-family: 'Montserrat';font-size: 27px;
+          font-weight: bold;
+        }
+        .p1{
+          position: absolute;
+          top: 130px;
+          left: 300px;
+          right: 18px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.6px;
+          max-width: 2300px;
+        }
+        .webserv{
+          position: absolute;
+          top: 340px;
+          left: 300px;
+          color: #ffffff;
+          text-transform: uppercase;
+          font-family: Arial, Helvetica, sans-serif;
+          letter-spacing: 330px;
+          font-size:60px;
+          max-width: 2300px;
+        }
+        .p2{
+          position: absolute;
+          top: 600px;
+          left: 300px;
+          right: 18px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 2300px;
+        }
+        .top-right2{
+          position: absolute;
+          top: 700px;
+          right: 0px;
+        }
+        .Lahcen{
+          position: absolute;
+          top: 900px;
+          left: 300px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .lahcen_p{
+          position: absolute;
+          top: 950px;
+          left: 300px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 360px;
+        }
+        .Yassine{
+          position: absolute;
+          top: 900px;
+          left: 1290px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .Yassine_p{
+          position: absolute;
+          top: 950px;
+          left: 1290px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 370px;
+        }
+        .Najwa{
+          position: absolute;
+          top: 900px;
+          left: 2200px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .Najwa_p{
+          position: absolute;
+          top: 950px;
+          left: 2200px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 370px;
+        }
+
+
+
+
+
+        @media (max-width:1578px) {
+          
+        }
+/* ------------------------------------- MEDIA    301-900 ---------------------------------------------------*/
+
+        @media (min-width: 301px) and (max-width: 900px) {
+          font-face {
+            font-family: 'Inconsolata';
+            src: url('/error_imgs/inconsolata.ttf') format('truetype');
+        }
+        .top-left {
+            display: none;
+        }
+        .top-right{
+          position: absolute;
+          top: 0px;
+          left: 0px;
+        }
+        .h1{
+          position: absolute;
+          top: 20px;
+          left: 150px;
+          color: #FF8000;
+          text-transform: uppercase;
+          font-family: 'Montserrat';font-size: 27px;
+          font-weight: bold;
+        }
+        .p1{
+          position: absolute;
+          top: 70px;
+          left: 150px;
+          right: 18px;
+          color: #ffffff;
+          font-family: Inconsolata,monospac ;font-size: 15px;
+          line-height: 1.5;
+          letter-spacing: 0.6px;
+        }
+        .webserv{
+          display: none;
+        }
+        .p2{
+          position: absolute;
+          top: 500x;
+          left: 150px;
+          right: 18px;
+          color: #ffffff;
+          font-family: Inconsolata,monospac ;font-size: 15px;
+          line-height: 1.5;
+          letter-spacing: 0.6px;
+        }
+        .top-right2{
+          display: none;
+        }
+        .Lahcen{
+          position: absolute;
+          top: 900px;
+          left: 150px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          font-size: 30px;
+          font-weight: bold;
+        }
+        .lahcen_p{
+          position: absolute;
+          top: 950px;
+          left: 150px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 360px;
+          }
+        .Yassine{
+          position: absolute;
+          top: 1300px;
+          left: 150px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .Yassine_p{
+          position: absolute;
+          top: 1350px;
+          left: 150px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 370px;
+        }
+        .Najwa{
+          position: absolute;
+          top: 1700px;
+          left: 150px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .Najwa_p{
+          position: absolute;
+          top: 1750px;
+          left: 150px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 370px;
+        }
+
+
+        }
+
+
+
+
+
+
+
+        /* ------------------------------------- MEDIA    901-1536 ---------------------------------------------------*/
+
+        @media (min-width: 901px) and (max-width: 1400px) 
+        {
+          font-face {
+            font-family: 'Inconsolata';
+            src: url('/error_imgs/inconsolata.ttf') format('truetype');
+        }
+        .top-left {
+                position: absolute;
+    top: -103px;
+    left: -112px;
+        }
+        .top-right{
+              position: absolute;
+    top: 0px;
+    right: -147px;
+}
+        
+        .h1{
+          position: absolute;
+    top: 198px;
+    left: 182px;
+    color: #FF8000;
+    text-transform: uppercase;
+    font-family: 'Montserrat';
+    font-size: 27px;
+    font-weight: bold;
+        }
+        .p1{
+         position: absolute;
+    top: 230px;
+    left: 182px;
+    right: 18px;
+    color: #ffffff;
+    font-family: Inconsolata,monospac;
+    font-size: 19px;
+    /* size: 13px; */
+    line-height: 1.5;
+    letter-spacing: 0.6px;
+        }
+        .webserv{
+              position: absolute;
+    top: 489px;
+    left: 253px;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-family: Arial, Helvetica, sans-serif;
+    letter-spacing: 70px;
+    font-size: 57px;
+        }
+        .p2{
+              position: absolute;
+    top: 636px;
+    left: 177px;
+    right: 47px;
+    color: #ffffff;
+    font-family: Inconsolata,monospac;
+    font-size: 19px;
+    line-height: 1.5;
+    letter-spacing: 0.6px;
+        }
+        .top-right2{
+          display: none;
+        }
+        .Lahcen{
+              position: absolute;
+    top: 896px;
+    left: 166px;
+    color: #FF8000;
+    font-family: Inconsolata,monospace;
+    font-size: 27px;
+    font-weight: bold;
+        }
+        .lahcen_p{
+              position: absolute;
+    top: 942px;
+    left: 167px;
+    color: #ffffff;
+    font-family: Inconsolata,monospace;
+    line-height: 1.5;
+    letter-spacing: 0.7px;
+    max-width: 360px;
+    font-size: 16px;
+          }
+        .Yassine{
+          position: absolute;
+    top: 900px;
+    left: 591px;
+    color: #FF8000;
+    font-family: Inconsolata,monospace;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 27px;
+              }
+        .Yassine_p{
+              position: absolute;
+    top: 938px;
+    left: 595px;
+    color: #ffffff;
+    font-family: Inconsolata,monospace;
+    line-height: 1.5;
+    letter-spacing: 0.7px;
+    max-width: 370px;
+    font-size: 16px;
+          }
+        .Najwa{
+              position: absolute;
+    top: 1266px;
+    left: 447px;
+    color: #FF8000;
+    font-family: Inconsolata,monospace;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 27px;
+        }
+        .Najwa_p{
+          position: absolute;
+    top: 1310px;
+    left: 449px;
+    color: #ffffff;
+    font-family: Inconsolata,monospace;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: 0.7px;
+    max-width: 370px;
+        }
+      
+      }
+
+
+
+
+
+        /* ------------------------------------- MEDIA    901-1536 ---------------------------------------------------*/
+
+        @media (min-width: 1401px) and (max-width: 1700px) {
+          font-face {
+            font-family: 'Inconsolata';
+            src: url('/error_imgs/inconsolata.ttf') format('truetype');
+        }
+        .top-left {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+        .top-right{
+          position: absolute;
+          top: 0px;
+          right: 40px;
+        }
+        .h1{
+          position: absolute;
+          top: 237px;
+          left: 182px;
+          color: #FF8000;
+          text-transform: uppercase;
+          font-family: 'Montserrat';
+          font-size: 27px;
+          font-weight: bold;
+        }
+        .p1{
+          position: absolute;
+          top: 286px;
+          left: 182px;
+          right: 18px;
+          color: #ffffff;
+          font-family: Inconsolata,monospac;
+          font-size: 19px;
+          /* size: 13px; */
+          line-height: 1.5;
+          letter-spacing: 0.6px;
+        }
+        .webserv{
+          position: absolute;
+          top: 452px;
+          left: 501px;
+          color: #ffffff;
+          text-transform: uppercase;
+          font-family: Arial, Helvetica, sans-serif;
+          letter-spacing: 70px;
+          font-size: 57px;
+        }
+        .p2{
+            position: absolute;
+            top: 656px;
+            left: 175px;
+            right: 56px;
+            color: #ffffff;
+            font-family: Inconsolata,monospac;
+            font-size: 19px;
+            line-height: 1.5;
+            letter-spacing: 0.6px;
+        }
+        .top-right2{
+          display: none;
+        }
+        .Lahcen{
+          position: absolute;
+          top: 929px;
+          left: 171px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          font-size: 30px;
+          font-weight: bold;
+        }
+        .lahcen_p{
+          position: absolute;
+          top: 977px;
+          left: 172px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 360px;
+          font-size: 15px;
+          }
+        .Yassine{
+          position: absolute;
+          top: 929px;
+          left: 690px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+          font-size: 30px;
+              }
+        .Yassine_p{
+          position: absolute;
+          top: 972px;
+          left: 687px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 370px;
+          font-size: 15px;
+          }
+        .Najwa{
+          position: absolute;
+          top: 929px;
+          left: 1237px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .Najwa_p{
+          position: absolute;
+          top: 972px;
+          left: 1223px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          font-size: 15px;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 370px;
+        }
+      }
+
+
+
+
+
+
+
+      /* ------------------------------------- MEDIA    1701-2024 ---------------------------------------------------*/
+
+      @media (min-width: 1701px) and (max-width: 2024px) {
+        font-face {
+            font-family: 'Inconsolata';
+            src: url('/error_imgs/inconsolata.ttf') format('truetype');
+        }
+        .top-left {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+        .top-right{
+          position: absolute;
+          top: 0px;
+          right: 40px;
+        }
+        .h1{
+          position: absolute;
+          top: 70px;
+          left: 300px;
+          color: #FF8000;
+          text-transform: uppercase;
+          font-family: 'Montserrat';font-size: 27px;
+          font-weight: bold;
+        }
+        .p1{
+          position: absolute;
+          top: 130px;
+          left: 300px;
+          right: 18px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.6px;
+          max-width: 2300px;
+        }
+        .webserv{
+          position: absolute;
+          top: 340px;
+          left: 300px;
+          color: #ffffff;
+          text-transform: uppercase;
+          font-family: Arial, Helvetica, sans-serif;
+          letter-spacing: 174px;
+          font-size: 60px;
+          max-width: 2300px;
+        }
+        .p2{
+          position: absolute;
+          top: 600px;
+          left: 300px;
+          right: 18px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 2300px;
+        }
+        .top-right2{
+          display: none;
+        }
+        .Lahcen{
+          position: absolute;
+          top: 876px;
+          left: 300px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .lahcen_p{
+          position: absolute;
+          top: 950px;
+          left: 300px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 360px;
+        }
+        .Yassine{
+          position: absolute;
+          top: 876px;
+          left: 832px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .Yassine_p{
+          position: absolute;
+          top: 939px;
+          left: 830px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 370px;
+        }
+        .Najwa{
+          position: absolute;
+          top: 874px;
+          left: 1339px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .Najwa_p{
+          position: absolute;
+          top: 937px;
+          left: 1346px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 370px;
+        }
+
+      }
+
+
+
+
+
+
+
+
+
+ /* ------------------------------------- MEDIA    2025-2700 ---------------------------------------------------*/
+
+ @media (min-width: 2025px) and (max-width: 2700px) {
+        font-face {
+            font-family: 'Inconsolata';
+            src: url('/error_imgs/inconsolata.ttf') format('truetype');
+        }
+        .top-left {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+        .top-right{
+          position: absolute;
+          top: 0px;
+          right: 40px;
+        }
+        .h1{
+          position: absolute;
+          top: 148px;
+          left: 300px;
+          color: #FF8000;
+          text-transform: uppercase;
+          font-family: 'Montserrat';
+          font-size: 33px;
+          size: 27px;
+          font-weight: bold;
+        }
+        .p1{
+          position: absolute;
+          top: 209px;
+          left: 300px;
+          right: 18px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.6px;
+          max-width: 2300px;
+          font-size: 17px;
+        }
+        .webserv{
+          position: absolute;
+          top: 340px;
+          left: 300px;
+          color: #ffffff;
+          text-transform: uppercase;
+          font-family: Arial, Helvetica, sans-serif;
+          letter-spacing: 282px;
+          font-size: 60px;
+          max-width: 2300px;
+        }
+        .p2{
+          position: absolute;
+          top: 600px;
+          left: 300px;
+          right: 18px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          font-size: 17px;
+          letter-spacing: 1.7px;
+          max-width: 2178px;
+        }
+        .top-right2{
+          display: none;
+        }
+        .Lahcen{
+          position: absolute;
+          top: 879px;
+          left: 300px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .lahcen_p{
+          position: absolute;
+          top: 948px;
+          left: 300px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 360px;
+        }
+        .Yassine{
+          position: absolute;
+          top: 879px;
+          left: 989px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .Yassine_p{
+          position: absolute;
+          top: 931px;
+          left: 990px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 370px;
+        }
+        .Najwa{
+          position: absolute;
+          top: 874px;
+          left: 1588px;
+          color: #FF8000;
+          font-family: Inconsolata,monospace;
+          text-transform: uppercase;
+          font-weight: bold;
+        }
+        .Najwa_p{
+          position: absolute;
+          top: 922px;
+          left: 1592px;
+          color: #ffffff;
+          font-family: Inconsolata,monospace;
+          line-height: 1.5;
+          letter-spacing: 0.7px;
+          max-width: 370px;
+        }
+        }
+    </style>
+    <title>Webserv</title>
+</head>
+<body style="background-color: black;overflow-x: hidden;">
+    <img class="top-left" src="/error_imgs/Ellipse8.png" alt="Image1">
+    <img class="top-right" src="/error_imgs/Ellipse14.png" alt="Image2">
+    <h1 class="h1" >Project</h1>
+    <p class="p1">This project serves as an opportunity for us to delve into the development of our own HTTP server. By being able to test it using a real web browser, we can gain practical experience. It's worth noting that HTTP/1.1(Hypertext Transfer Protocol) stands as one of the primary protocols used on the internet. It governs the communication between web browsers and servers, facilitating the retrieval and exchange of resources such as web pages, images, and other media. Acquiring knowledge about the inner workings of HTTP can provide us with a deeper understanding of how the internet functions and prove useful in various scenarios, even beyond website development.</p>
+    <h1 class="webserv" >Webserv</h1>
+    <p class="p2">Working as a tightly team, we collaborate closely, utilizing our individual strengths to develop an HTTP server that works smoothly and is thoroughly tested. Our main objective is to learn more about HTTP, improve our development skills, and create a high-quality project that meets our goals , By dividing the workload into  three specific areas, each team member can concentrate on their assigned tasks .</p>
+    <img class="top-right2" src="/error_imgs/Ellipse12.png" alt="Image3">
+    <h1 class="Lahcen">Lahcen Elhlami</h1>
+    <p class="lahcen_p">Lahcen takes on the responsibility of networking and sockets. They handle the implementation of networking protocols and establish the necessary connections between the server and clients. This includes managing socket programming, handling incoming and outgoing data, and ensuring smooth communication channels.</p>
+    <h1 class="Yassine">Yassine Dahni</h1>
+    <p class="Yassine_p">Yassine focuses on request handling. They work on processing and interpreting client requests, extracting relevant information, and managing the server's resources accordingly. Yassine is responsible for implementing the logic behind routing requests, handling different HTTP methods, and ensuring proper validation and authorization.
+      <h1 class="Najwa">Najwa Rahali</h1>
+      <p class="Najwa_p">Najwa specializes in crafting responses. They handle the generation and delivery of appropriate responses to client requests. This involves constructing well-formed response headers, handling status codes, and ensuring the timely delivery of the requested data or appropriate error messages .</p>
+  </body>
+</html>

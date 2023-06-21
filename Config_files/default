@@ -19,33 +19,31 @@ server
 	error_page=501 /error_page/501.html
 	error_page=505 /error_page/505.html
 
-	location / 
+	location /
     {
 
-		allow_methods=GET	POST
+		allow_methods=GET	POST DELETE
 
 		# redirect=301 /a/index.html
-		#delete space in red
-		#" /index.html"
 	
 		root={PATH}/root
 		
 		autoindex=on
 
-		default=/Project.html
+		# default= /index.html 
 
 		cgi=.py /bin/python3
-
-		upload=/upload
+		cgi=.php /root/php-cgi
+		# upload=/upload
 
 	}
 
-	location /a 
+	location /error 
     {
 
 		allow_methods=GET POST DELETE
 
-		# redirect=301 index.html
+		redirect=301 index.html
 
 		root={PATH}/root
 		
@@ -54,6 +52,7 @@ server
 		default=/index.html
 
 		cgi=.py /bin/python3
+		cgi=.php /root/php-cgi
 
 		upload=/goinfre
 
@@ -63,7 +62,7 @@ server
 
 server
 {
-	server_name=test2
+	server_name=www.exemple.com
 
 	listen=127.0.0.1:8084
 
@@ -86,6 +85,7 @@ server
 		default=/default.html
 
 		cgi=.py /bin/python3
+		cgi=.php /root/php-cgi
 
 		upload=/upload
 
@@ -103,8 +103,9 @@ server
 		autoindex=on
 
 		default=/default.html
-
-		cgi=.php /bin/php
+	
+		cgi=.py /bin/python3
+		cgi=.php /root/php-cgi
 
 		upload=/goinfre
 

@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/26 18:22:19 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/16 17:30:49 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 01:32:48 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <list>
+#include <vector>
 #include <arpa/inet.h>
 
 #define MAX_PORT_NUMBER 65535
@@ -26,6 +27,7 @@ const std::string	validLocationKeys[] = {"allow_methods", "redirect", "root", "a
 
 typedef short StatusNbr;
 typedef std::string Path;
+typedef std::vector<Path>	FilePaths;
 
 typedef std::string Extension;
 typedef std::unordered_map<Extension, Path> CgiPair;
@@ -58,7 +60,7 @@ public:
 		redirectionPair redirection;
 		Path root;
 		bool autoindex;
-		Path defaultFile;
+		FilePaths defaultFiles;
 		Path uploadRoute;
 		CgiPair cgi;
 		std::list<std::string>	requiredLocationKeysList;

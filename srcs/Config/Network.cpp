@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Network.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/14 22:31:50 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/21 03:25:55 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,16 @@ void Network::initServersSockets(Servers& servers)
 	addServerFDListenCollection(servers);
 	while (1)
 	{
-		pollMultiplexing(servers);
-		handleNewConnections();
-		handleActions();
+		try
+		{
+			pollMultiplexing(servers);
+			handleNewConnections();
+			handleActions();
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
 	}
 }
 
@@ -58,27 +65,19 @@ void Network::handleNewConnections()
 {
 	for (size_t i = 0; i < serverCollection.size(); i++)
 	{
-		// request	req;
-		// Client	client;
-		// int valread;
-		// char buffer[MAX_BUFFER];
-		
 		if (pollFds[i].revents & POLLIN)
 		{
 			Socket newSock = getNewConnectionSock(pollFds[i].fd);
 			initPollFdClient(newSock, serverCollection[i]);
-			// requestCollection.push_back(std::make_pair(newSock, req));
-			// valread = read(newSock, buffer, 300000);
-			// std::cout << buffer << std::endl;
 		}
 	}
 }
 
 Socket Network::getNewConnectionSock(Socket listenSock)
 {
-	// int tmp = 1;
+	int enable = 1;
 	Socket newSock = accept(listenSock, NULL, NULL);
-	// setsockopt(newSock, SOL_SOCKET, SO_NOSIGPIPE, &tmp, sizeof(tmp));
+	setsockopt(newSock, SOL_SOCKET, SO_NOSIGPIPE, &enable, sizeof(enable));
 	if (newSock == -1)
 		throwErrnoException("getNewConnectionSock() failed to accept new connection");
 
@@ -257,17 +256,19 @@ void Network::handleActions(void)
 				close(pollFds[j].fd);
 				pollFds.erase(pollFds.begin() + j);
 				delete clientCollection[j - serverCollection.size()].myRequest;
+				delete clientCollection[j - serverCollection.size()].myResponse;
 				clientCollection.erase(clientCollection.begin() + j - serverCollection.size());
 				throw std::runtime_error("Issue in read() function!");
 			}
 			else if (bytesRead == 0)
 			{
-				// Client disconnected
-				// std::cout << "Client disconnected" << std::endl;
-				if (clientCollection[j - serverCollection.size()].myStage == RESPONSE)
-					pollFds[j].events = POLLOUT;
-				// pollFds[j].events = POLLOUT;
-				// clientCollection[j - serverCollection.size()].myStage = RESPONSE;
+				clientCollection[j - serverCollection.size()].myStage = FINISH;
+				close(pollFds[j].fd);
+				pollFds.erase(pollFds.begin() + j);
+				delete clientCollection[j - serverCollection.size()].myRequest;
+				delete clientCollection[j - serverCollection.size()].myResponse;
+				clientCollection.erase(clientCollection.begin() + j - serverCollection.size());
+				throw std::runtime_error("Client Disconnected!");
 			}
 			else
 			{
