@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * {
+  box-sizing: border-box;
+  background-color: rgb(12, 12, 12);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.top-left {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+}
+.top-right{
+    position: absolute;
+    top: -32px;
+    right: 1549px;
+}
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+ 
+}
+</style>
+</head>
+<body>
+
+<div class="row">
+  <div class="column">
+    <img src="./img/Frame2.svg" alt="Snow" style="width:100%">
+  </div>
+  <div class="column">
+    <img src="./img/Frame3.svg" alt="Forest" style="width:100%">
+  </div>
+  <div class="column">
+    <img src="./img/Frame1.svg" alt="Mountains" style="width:100%">
+  </div>
+    <img class="top-right" src="/Project/img/Ellipse14.png" alt="Image2">
+</div>
+
+</body>
+</html>

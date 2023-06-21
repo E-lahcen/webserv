@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 23:07:08 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/21 02:02:43 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/21 22:42:33 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int request::RemoveDirectory(std::string path)
 {
     if (access(path.c_str(), F_OK | W_OK | X_OK ) == 0)
     {
-        std::cout << "YAS == " << std::endl;
         DIR* d = opendir(path.c_str());
         struct dirent* type;
         while ((type = readdir(d)) != NULL)
@@ -39,9 +38,7 @@ int request::RemoveDirectory(std::string path)
                     continue;
                 else
                 {
-                    std::cout << "directory = |" << directory << "|" << std::endl;
                     directory = JoinePathToRoot(path , type->d_name);
-                    std::cout << "path of new directory = |" << directory << "|" << std::endl;
                     int error = RemoveDirectory(JoinePathToRoot(path , type->d_name));
                     if (error == 409)
                     {
@@ -76,7 +73,6 @@ int request::RemoveFile(std::string file)
 
 void request::Delete()
 {
-    std::cout << this->path.c_str() << " path in delete" << std::endl;
     struct stat info;
     if (stat(this->path.c_str(), &info) == 0)
     {

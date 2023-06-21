@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Network.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/21 21:07:03 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:42:03 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,9 @@ void Network::initServersSockets(Servers& servers)
 		 server != servers.end(); ++server)
 	{
 		createListenSocket(server->socketFd, servers);
-		// try{
-			makeServerListen(server, servers);
-		// }
-		// catch(const std::exception& e)
-		// {
-		// 	std::cerr << e.what() << '\n';
-		// }
+		makeServerListen(server, servers);
 		addPollFd(server);
 	}
-    std::cout << "Connected Servers : " << servers.size() << std::endl;
 	addServerFDListenCollection(servers);
 	while (1)
 	{

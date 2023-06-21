@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 21:50:49 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/20 21:38:55 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/21 23:50:26 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,8 @@ void request::CheckErrorsHeader()
     }
     if (this->method == "POST" && this->StatutCode == 0)
     {
+        if (this->map.find("Content-Type") == this->map.end())
+            CheckErrorsPage(409);
         if (this->map.find("Transfer-Encoding") == this->map.end() && this->map.find("Content-Length") == this->map.end())
             CheckErrorsPage(400);
         else if (this->map.find("Transfer-Encoding") != this->map.end() && this->map.find("Content-Length") != this->map.end())
@@ -173,6 +175,8 @@ std::string GetExtension(std::string type)
         return ("");
     if (type == "multipart/form-data")
         return ("");
+    if (type == "image/svg+xml")
+        return (".svg");
     if (type == "image/jpg")
         return (".jpg");
     if (type == "image/jpeg")
@@ -223,7 +227,6 @@ void request::CheckErrorsPage(int status_code)
         this->path = JoinePathToRoot(this->ROT , this->errorPage[status_code]);
     else
         this->path.clear();
-    std::cout << status_code << " " << this->path << std::endl;
 }
 
 

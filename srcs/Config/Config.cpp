@@ -8,6 +8,7 @@ Config::Config(const char *filePath)
     load(filePath);
     createDefaultServer();
     std::cout << "Local Ip adress for Default Server : " << configServers.back().hostname << std::endl;
+    std::cout << "Connected Servers : " << configServers.size() << std::endl;
     Network::initServersSockets(configServers);
 }
 
@@ -218,9 +219,7 @@ FilePaths   Config::parseDefaultFile( std::string& value )
     {
         word = trim_spaces(word);
         vec.push_back(word);
-        std::cout << " path = " << word << "\t";
     }
-    std::cout << std::endl;
     if (vec.empty())
         throw std::runtime_error("Invalid configuration : default path must be filled!");
     return vec;
@@ -285,7 +284,7 @@ void	Config::createDefaultServer()
     loc.route = "/";
     loc.get = true;
     loc.root = getlocalPath() + "/root";
-    loc.defaultFiles.push_back("/index.html");
+    loc.defaultFiles.push_back("/Project/Webserv.html");
 
     serv.setServerLocations(std::make_pair("/", loc));
 

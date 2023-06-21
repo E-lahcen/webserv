@@ -43,6 +43,8 @@ std::string Response::FindingExten(std::string extension)
         return ("application/json");
     if (extension == ".jpg")
         return ("image/jpg");
+    if (extension == ".svg")
+        return ("image/svg+xml");
     if (extension == ".jpeg")
         return ("image/jpeg");
     if (extension == ".png")
