@@ -1,7 +1,5 @@
 server
 {
-    
-	server_name=test
 
 	listen=host:port
 

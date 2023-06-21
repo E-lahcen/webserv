@@ -1,7 +1,6 @@
 server
 {
     
-	server_name=www.exemple.com
 
 	listen=127.0.0.1:8083
 
@@ -62,7 +61,6 @@ server
 server
 {
     
-	server_name=www.exemple.com
 
 	listen=127.0.0.1:8084
 
@@ -124,7 +122,6 @@ server
 server
 {
     
-	server_name=www.exemple.com
 
 	listen=127.0.0.1:8085
 
