@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 11:55:05 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/18 22:23:39 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 04:30:31 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,7 @@
 
 void throwErrnoException(const std::string &context)
 {
-
-    std::string errorMsg = context + ": ";
-    errorMsg += std::strerror(errno);
-    throw std::runtime_error(errorMsg);
+    throw std::runtime_error(context);
 }
 
 void makeFDNonBlock(int fd)

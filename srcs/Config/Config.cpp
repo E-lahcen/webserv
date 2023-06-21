@@ -173,7 +173,7 @@ std::pair<Path, Server::Location> Config::parseLocation(std::ifstream &ifile, st
                 else if (key == "root")
                     location.root = getRealPath(value);
                 else if (key == "autoindex")
-                    location.autoindex = (value == "on");
+                    location.autoindex = parseAutoindex(value);
                 else if (key == "default")
                     location.defaultFiles = parseDefaultFile(value);
                 else if (key == "upload")
@@ -253,6 +253,14 @@ std::pair<Extension, Path> Config::parseCgi(const std::string &value)
     if (path[0] != '/')
         throw std::runtime_error("Invalid CGI path!");
     return std::pair<Extension, Path>(extension, path);
+}
+
+bool    Config::parseAutoindex( std::string& value )
+{
+    bool val;
+
+    (value == "on" ) ? val = true : (value == "off") ? val = false :  throw std::runtime_error("Invalid auto index value : " + value); 
+    return val;
 }
 
 void	Config::createDefaultServer()

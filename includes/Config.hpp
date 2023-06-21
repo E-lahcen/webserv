@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 16:53:30 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/21 01:24:32 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 05:07:31 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ private:
 	void parseMethods(Server::Location &, const std::string &);
 	std::pair<Extension, Path> parseCgi(const std::string &);
 	FilePaths   parseDefaultFile( std::string& );
+	bool    parseAutoindex( std::string& value );
 	void	createDefaultServer();
 	bool    checkRequiredKeys();
 	void    checkControl();

@@ -26,8 +26,6 @@ bool Response::HeaderInCaseErrorCGI(request &r)
     return true;
 }
 
-
-
 //Header In Case OF CGI exactly .php 
 std::string Response::HeaderOFCGI(request &r)
 {
@@ -41,6 +39,13 @@ std::string Response::HeaderOFCGI(request &r)
     Header += Timing();
 
     size = read(this->OpenedFd, buf, size);
+    if (size <= 0)
+    {
+        this->OpenedFd = -1;
+        if (HeaderInCaseErrorCGI(r) == true)
+            return ("empty");
+    }
+
 
     std::string file_php(buf,size);
 

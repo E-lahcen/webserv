@@ -44,7 +44,7 @@ void Response::ResponseBodyError()
     if (OpenedFd != -1) 
     {   
         len = read(OpenedFd, buf, 1024);
-        if (len == 0)
+        if (len <= 0)
         {
             this->Closedfile = true;
             close(OpenedFd);

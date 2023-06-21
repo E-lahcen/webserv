@@ -109,7 +109,7 @@ void Response::ResponseBody(request &r)
     if (OpenedFd != -1)
     {
         len = read(OpenedFd, buf, 1024);
-        if (len == 0)
+        if (len <= 0)
         {
             if (!storpath.empty())
             {

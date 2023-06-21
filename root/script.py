@@ -3,15 +3,13 @@ import cgi
 import os
 import tempfile
 
-print("Content-Type: text/html\n\n")
-
 form = cgi.FieldStorage()
 
 if form.getvalue('file'):
     file_item = form['file']
     if file_item.filename:
         # Specify the directory where you want to save the uploaded file
-        upload_dir = './upload/'
+        upload_dir = './root/uploadPy/'
 
         # Create the upload directory if it doesn't exist
         if not os.path.exists(upload_dir):
@@ -19,11 +17,10 @@ if form.getvalue('file'):
 
         # Generate a unique name for the file to prevent overwriting
         filename = tempfile.NamedTemporaryFile(dir=upload_dir).name
-
         # Save the file
         with open(os.path.join(upload_dir, filename), 'wb') as file:
             file.write(file_item.file.read())
-
+            
         print("File uploaded successfully.")
         exit()
 

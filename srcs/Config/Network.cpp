@@ -6,7 +6,7 @@
 /*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 17:14:53 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/21 03:25:55 by lelhlami         ###   ########.fr       */
+/*   Updated: 2023/06/21 04:40:52 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,6 +258,7 @@ void Network::handleActions(void)
 				delete clientCollection[j - serverCollection.size()].myRequest;
 				delete clientCollection[j - serverCollection.size()].myResponse;
 				clientCollection.erase(clientCollection.begin() + j - serverCollection.size());
+				--j;
 				throw std::runtime_error("Issue in read() function!");
 			}
 			else if (bytesRead == 0)
@@ -268,6 +269,7 @@ void Network::handleActions(void)
 				delete clientCollection[j - serverCollection.size()].myRequest;
 				delete clientCollection[j - serverCollection.size()].myResponse;
 				clientCollection.erase(clientCollection.begin() + j - serverCollection.size());
+				--j;
 				throw std::runtime_error("Client Disconnected!");
 			}
 			else
@@ -289,6 +291,7 @@ void Network::handleActions(void)
 				close(pollFds[j].fd);
 				pollFds.erase(pollFds.begin() + j);
 				delete clientCollection[j - serverCollection.size()].myRequest;
+				delete clientCollection[j - serverCollection.size()].myResponse;
 				clientCollection.erase(clientCollection.begin() + j - serverCollection.size()); // 2 erpresent size of server arrays Don't forget to edit it
 				--j;
 			}

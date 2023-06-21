@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrahali <nrahali@student.42.fr>            +#+  +:+       +#+        */
+/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 16:25:26 by lelhlami          #+#    #+#             */
-/*   Updated: 2023/06/15 01:15:28 by nrahali          ###   ########.fr       */
+/*   Updated: 2023/06/21 05:17:22 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void    Client::processRequest( Servers& servers )
     {
         myRequest->header = myBuffer.substr(0, myBuffer.find("\r\n\r\n") + 4);
         myRequest->GetRequest(servers);
+        std::cout <<  myRequest->header << std::endl;
         myBuffer = myBuffer.substr(myBuffer.find("\r\n\r\n") + 2);
     }
     if (myRequest->GetStatutCode() != 0 && myRequest->GeterMethod() == "POST")

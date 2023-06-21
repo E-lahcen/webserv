@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Post.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lelhlami <lelhlami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/06 22:02:26 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/20 22:16:29 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/21 05:24:14 by lelhlami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,9 +92,11 @@ void request::CreatFileInDirectoryOfCgi(iterator_location &itl)
     if (S_ISDIR(info.st_mode))
     {
         this->path += GetRandomName() + GetExtension(this->map["Content-Type"]);
+        std::cout << "path test ==== 1111" <<this->path << std::endl; 
         this->file = open(this->path.c_str(), O_CREAT | O_RDWR, 0777);
         if (this->file < 0)
         {
+            std::cout << "here ==== 1111\n"; 
             this->cgi = false;
             RemoveFile(this->path);
             CheckErrorsPage(500);
@@ -106,9 +108,11 @@ void request::CreatFileInDirectoryOfCgi(iterator_location &itl)
         if (mkdir(path.c_str(), S_IRWXU) == 0)
         {
             this->path += GetRandomName() + GetExtension(this->map["Content-Type"]);
+            std::cout << "path test ==== 2222" <<this->path << std::endl; 
             this->file = open(this->path.c_str(), O_CREAT | O_RDWR, 0777);
             if (this->file < 0)
             {
+                std::cout << "here ==== 2222\n"; 
                 this->cgi = false;
                 RemoveFile(this->path);
                 CheckErrorsPage(500);
