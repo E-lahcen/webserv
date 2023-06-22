@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 21:50:49 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/22 02:43:55 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/22 13:28:47 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ std::string GetRandomName()
     {
         x = std::rand() % name1.size();
         c += name1[x];
-        usleep(10);
         x = std::rand() % name2.size();
         c += name2[x];
     }
@@ -74,27 +73,6 @@ std::string GetRandomName()
 
     return (c);
 }
-
-//check uri if valid
-
-int CheckUri(std::string uri)
-{
-    std::string allowedchar = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
-    int i = 0;
-    while (uri[i])
-    {
-        if (uri[i] == '%')
-        {
-            if(isxdigit(uri[i + 1]) && isxdigit(uri[i + 2]))
-                return (0);
-        }
-        if (allowedchar.find(uri[i]) == std::string::npos)
-            return (0);
-        i++;
-    }
-    return (1);
-}
-
 
 void request::Check_methods()
 {
@@ -125,16 +103,12 @@ void request::CheckErrorsHeader()
     if (this->method == "POST" && this->StatutCode == 0)
     {
         if (this->map.find("Content-Type") == this->map.end())
-            CheckErrorsPage(409);
+            CheckErrorsPage(400);
         if (this->map.find("Transfer-Encoding") == this->map.end() && this->map.find("Content-Length") == this->map.end())
             CheckErrorsPage(400);
         else if (this->map.find("Transfer-Encoding") != this->map.end() && this->map.find("Content-Length") != this->map.end())
             CheckErrorsPage(400);
     }
-    if (CheckUri(this->uri) == 0 && this->StatutCode == 0)
-        CheckErrorsPage(400);
-    if (this->uri.length() > 2048 && this->StatutCode == 0)
-        CheckErrorsPage(414);
 }
 
 //join to root
@@ -197,30 +171,6 @@ std::string GetExtension(std::string type)
         return (".pdf");
     return ("");
 }
-
-
-//Scan Folder For index file
-std::string ScanFolderForIndex(std::string &path)
-{
-    DIR* d = opendir(path.c_str());
-    struct dirent* type;
-    while ((type = readdir(d)) != NULL)
-    {
-        if (type->d_type == DT_REG)
-        {
-            std::string fileName(type->d_name);
-            if (fileName.find("index") != std::string::npos)
-            {
-                closedir(d);
-                return (fileName);
-            }
-        }
-    }
-    closedir(d);
-    return ("NotFound");
-}
-
-
 
 
 void request::CheckErrorsPage(int status_code)

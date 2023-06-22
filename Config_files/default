@@ -12,7 +12,6 @@ server
 	error_page=405 /error_page/405.html
 	error_page=409 /error_page/409.html
 	error_page=413 /error_page/413.html
-	error_page=414 /error_page/414.html
 	error_page=500 /error_page/500.html
 	error_page=501 /error_page/501.html
 	error_page=505 /error_page/505.html
@@ -64,7 +63,6 @@ server
 	error_page=405 /error_page/405.html
 	error_page=409 /error_page/409.html
 	error_page=413 /error_page/413.html
-	error_page=414 /error_page/414.html
 	error_page=500 /error_page/500.html
 	error_page=501 /error_page/501.html
 	error_page=505 /error_page/505.html
@@ -115,7 +113,6 @@ server
 	error_page=405 /error_page/405.html
 	error_page=409 /error_page/409.html
 	error_page=413 /error_page/413.html
-	error_page=414 /error_page/414.html
 	error_page=500 /error_page/500.html
 	error_page=501 /error_page/501.html
 	error_page=505 /error_page/505.html

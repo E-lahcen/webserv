@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:13 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/20 22:11:19 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/22 13:14:36 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,4 +150,3 @@ int CheckHexa(std::string s);
 std::string GetExtension(std::string type);
 std::string JoinePathToRoot(std::string root, std::string add);
 std::string GetRandomName();
-std::string ScanFolderForIndex(std::string &path);

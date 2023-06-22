@@ -102,8 +102,6 @@ bool Response::CheckingStatusCode(int status_code)
             return (true);
         case 413:
             return (true);
-        case 414:
-           return (true);
         case 500:
            return (true);
         case 501:

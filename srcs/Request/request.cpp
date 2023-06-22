@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 15:20:53 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/21 22:11:32 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/22 13:19:54 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void request::GetContentLength(std::string &body)
             body = body.substr(this->body.find("\r\n") + 3);
         }
         this->ContentLength += body.size();
-        if (this->ContentLength == size)
+        if (this->ContentLength >= size)
         {
             if(!body.empty())
             {

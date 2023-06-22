@@ -275,7 +275,6 @@ void	Config::createDefaultServer()
     serv.errorPage.insert(std::make_pair(405, "/error_page/405.html"));
     serv.errorPage.insert(std::make_pair(409, "/error_page/409.html"));
     serv.errorPage.insert(std::make_pair(413, "/error_page/413.html"));
-    serv.errorPage.insert(std::make_pair(414, "/error_page/414.html"));
     serv.errorPage.insert(std::make_pair(500, "/error_page/500.html"));
     serv.errorPage.insert(std::make_pair(501, "/error_page/501.html"));
     serv.errorPage.insert(std::make_pair(505, "/error_page/505.html"));

@@ -31,9 +31,6 @@ void  Response::PrintErrors()
         case 413:
             PrintHtmlError("413 Request Entity Too Large");
             break;
-         case 414:
-            PrintHtmlError("414 Request-URI Too Long");
-            break;
          case 500:
             PrintHtmlError("500 Internal Server Error");
             break;
@@ -76,9 +73,6 @@ std::string Response::CasesStatuslineError(request &r)
         case 413:
             status_line += " Payload Too Large\n";
             return (status_line);
-        case 414:
-            status_line += " URI Too Long\n";
-            return (status_line);
         case 500:
             status_line += " Internal Server Error\n";
             return (status_line);
@@ -118,9 +112,6 @@ std::string Response::ContentLengthFileError(request &r)
            Content_Length += my_to_string(LengthFileError(r.path));
            break;
        case 413:
-           Content_Length += my_to_string(LengthFileError(r.path));
-           break;
-        case 414:
            Content_Length += my_to_string(LengthFileError(r.path));
            break;
         case 500:
