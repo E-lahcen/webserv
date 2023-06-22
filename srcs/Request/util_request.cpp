@@ -6,7 +6,7 @@
 /*   By: ydahni <ydahni@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/04 21:50:49 by ydahni            #+#    #+#             */
-/*   Updated: 2023/06/21 23:50:26 by ydahni           ###   ########.fr       */
+/*   Updated: 2023/06/22 02:43:55 by ydahni           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int CheckHexa(std::string s)
 
 std::string GetRandomName()
 {
-    std::string alpha = "aefgklmno6pz1594ruthstuvw8xyuvwbcdjklqrsdsfwxyrstuvwxyz";
+    std::string alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     std::vector<std::string> name1;
     std::vector<std::string> name2;
     std::string c;
@@ -55,20 +55,24 @@ std::string GetRandomName()
         c = alpha[x];
         name2.push_back(c);
     }
-    
-    int i = std::rand() % name1.size();
-    usleep(10);
-    // std::srand(std::time(0));
-    int j = std::rand() % name2.size();
 
-    std::string name = name1[i] + name2[j];
+    c.clear();
+    x = 0;
+
+    for (int i = 0; i < 26; i++)
+    {
+        x = std::rand() % name1.size();
+        c += name1[x];
+        usleep(10);
+        x = std::rand() % name2.size();
+        c += name2[x];
+    }
 
     alpha.clear();
-    c.clear();
     name1.clear();
     name2.clear();
 
-    return (name);
+    return (c);
 }
 
 //check uri if valid
