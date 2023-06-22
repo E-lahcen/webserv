@@ -70,7 +70,13 @@ size_t Response::LengthFile(std::string filename)
     {
         if (fseek(file, 0, SEEK_END) == 0)
         {
-            size = ftell(file);
+            if(ftell(file) < 0)
+            {
+                fclose(file);
+                return (0);
+            }
+            else
+                size = ftell(file);
             fclose(file);
             return(size);
         }

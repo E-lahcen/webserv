@@ -9,7 +9,13 @@ size_t Response::LengthFileError(std::string filename)
     {
         if (fseek(file, 0, SEEK_END) == 0)
         {
-            size = ftell(file);
+            if(ftell(file) < 0)
+            {
+                fclose(file);
+                return (0);
+            }
+            else
+                size = ftell(file);
             fclose(file);
             return(size);
         }
@@ -29,6 +35,6 @@ void Response::ErrorHandling(request &r)
 {
     this->Status_Code = 500;
     r.SetStatutCode(500);
-    r.path = getlocalPath() + "/root/error_page/500.html";
+    r.path.clear();
 }
 
